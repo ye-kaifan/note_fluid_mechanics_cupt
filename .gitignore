@@ -1,0 +1,33 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fls
+*.log
+*.out
+*.toc
+*.xdv
+*.synctex.gz
+*.synctex.gz(busy)
+*.fdb_latexmk
+*.run.xml
+*.ilg
+*.blx.bib
+
+# User wants the PDF itself to be tracked, so *.pdf is NOT ignored.
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*~

@@ -1,0 +1,1737 @@
+\documentclass[cn,11pt,newtx,citestyle=gb7714-2015,bibstyle=gb7714-2015]{elegantbook}
+\ExecuteBibliographyOptions{sorting=gb7714-2015}
+
+%%一些额外的自定义格式与宏包引用
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+\newcommand*{\dif}{\mathop{}\!\mathrm{d}}  %定义符合科学规范的微分算符\dif
+\usepackage{amsfonts}
+\usepackage{float} %设置图片浮动位置的宏包
+\usepackage{subfigure} %插入多图时用子图显示的宏包
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{framed}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{nicematrix}
+\usepackage{siunitx}%SI单位制，建议所有单位都采用宏包中的命令，宏包文档网上很容易获取。注意命令应在文本环境使用，公式环境会改变展示效果
+\sisetup{inter-unit-product = \ensuremath { { } \cdot { } } }
+\usepackage{hyperref}
+\usepackage{cleveref}
+\crefname{equation}{式}{式}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}
+\crefname{appendix}{附录}{附录}
+\usepackage{threeparttable}
+\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+    columns=fixed,       
+    numbers=left,                                        % 在左侧显示行号
+    frame=none,                                          % 不显示背景边框
+    backgroundcolor=\color[RGB]{245,245,244},            % 设定背景颜色
+    keywordstyle=\color[RGB]{40,40,255},                 % 设定关键字颜色
+    numberstyle=\footnotesize\color{darkgray},           % 设定行号格式
+    commentstyle=\it\color[RGB]{0,96,96},                % 设置代码注释的格式
+    stringstyle=\rmfamily\slshape\color[RGB]{128,0,0},   % 设置字符串格式
+    showstringspaces=false,                              % 不显示字符串中的空格
+    breaklines = true,
+    language=tex,                                        % 设置语言
+}
+
+\title{流体力学讲义}
+\subtitle{CUPT公开编辑}
+
+\author{CUPT队员们}
+\institute{陕师大物信院-物理竞赛协会-学术竞赛部}
+\date{September 29, 2021}
+\version{10月19日版}
+%\bioinfo{自定义}{信息}
+
+\extrainfo{培养一个优秀科学人才的“关键”是什么？\\我想关键在于让年轻人停止当学生，开始成为物理学研究者。——Steven Weinberg\\苏格拉底说：“教育的本质不是灌输，而是点燃火焰。”}
+
+\setcounter{tocdepth}{3}
+
+\logo{logo-CUPT.png}
+\cover{PSICCUPT背景(渐变).png}
+
+\definecolor{customcolor}{RGB}{0,47,167}%25,25,112/65,105,225
+\colorlet{coverlinecolor}{customcolor}
+
+\begin{document}
+
+\numberwithin{equation}{section} %将子章节的编号赋值给公式编号
+\renewcommand\theequation{\arabic{chapter}-\arabic{section}-\arabic{equation}}%将公式编号格式定义为类似(5-2-1)的形式
+
+\maketitle
+\frontmatter
+
+\chapter{内容简介与鸣谢}
+
+\markboth{Introduction}{前言}
+第35届CUPT赛题中近半数赛题与流体有关，流体力学的培训迫在眉睫。本讲义旨在培养CUPT新队员在流体方面的研究能力，奠定流体力学基础。
+
+本讲义所做的是一件“符合国内学生实际情况”的事情。本讲义是站在学习者的角度写的，全书的核心就是“理解”。流体力学优秀教材数不胜数，学生却担心读不懂，或者单纯是懒得翻看，转而过于依赖良莠不齐的网络资源，基于学生依赖检索而阅读匮乏的现状，本讲义根据笔者物理上的taste，以通俗易懂、有趣好用为原则，围绕物理学术竞赛流体相关赛题的理论和实验，筛选摘录了大量优质书籍选段，以期亡羊补牢!
+
+本讲义属于半讲解半摘录，最早由我发起，撰写了流体模型、量纲分析和空气动力学部分，由宋雨潇撰写Navier-Stokes方程，随后公开编辑，由全体CUPT老队员共同编辑。因此讲义中有部分内容由往届队员根据自身强项编写，还有部分内容是优秀教材摘录，有的是以图文并茂的形式呈现，有的则以清晰的书籍图片形式展示，这么做一方面是为了保留原汁原味，另一方面是因为书籍的讲法与本讲义目标一直，且时间紧迫，笔者能力和精力也有限，还请读者见谅!
+
+正因为本讲义的编写特点决定了本讲义算不上“书籍”或者“文集”之类，本讲义甚至不是独立的，摘录了不少其他书，所以本讲义仅供校队内部使用，千万不能外传，更不可商用，否则将侵犯其他书的版权，后果很严重!
+
+在最后一段，一般总要对一些人表示致谢。如果读者觉得有些肉麻，请在您的眼睛瞟见我要致谢谁之前，赶快翻过这一页吧。特别鸣谢贺佳琦学长提供的帮助与支持！特别感激陕师大CUPT指导老师和学长学姐们的栽培！特别感谢CUPT全体老队员们编辑本讲义所付出的时间精力！因为热爱，所以不同。
+\vskip 0.5cm
+\underline{本讲义版权归物理竞赛协会所有。}
+
+\vskip 1.5cm
+
+\begin{flushright}
+叶凯帆\\
+September 29, 2021\\
+陕西师范大学，长安校区，周园D1区409
+\end{flushright}
+
+\chapter{序言}
+\markboth{Introduction}{序言}
+中国大学生物理学术竞赛是一项以团队对抗为形式的物理竞赛，它以协同创新为根本理念，旨在提高学生综合应用所学知识分析解决实际物理问题的能力，培养学生的开放性思维能力。陕西师范大学代表队自2017年参赛以来已历五届，在学校及物理学与信息技术学院的支持下，组建了专业竞赛辅导教师团队，成立了物理竞赛协会，形成了较为完善的竞赛培训机制，竞赛成绩逐年提高，在2021年的国赛中取得了全国二等奖、西北地区第一名的好成绩。在五年的备赛过程中，团队积累了丰富的竞赛经验，为了把比赛经验记录下来，使得师大学子在未来的比赛中再接再厉，再创新高。同时，2022年的多道赛题中均涉及到了流体力学的知识，但师大目前并不开设这一门课程，导致同学们对流体力学的了解不够，容易产生畏难的情绪，不利于竞赛工作的开展。为了解决这一需求，物理竞赛协会在学院的支持下，在指导老师的帮助下，把之前比赛中涉及到的流体力学知识以及常用的流体力学内容以文字的形式记录下来，以期望参赛学子能有所收获。
+
+叶凯帆同学是师大校队和物理竞赛协会的核心成员，在之前的比赛中取得了西北赛区特等奖的优异成绩，长期承担着团队中流体力学题目的攻坚克难，对流体力学的知识较为熟悉，对流体力学的问题研究得较为深入，在流体力学方面积累了丰富的竞赛经验与体会。这本经过多次修改和补充的流体力学讲义就是他一年心血的结晶，在这本讲义中，凯帆同学是以学习者的角度展开编写的，其中容纳了众多流体力学教材的精华，也有其余队员的一些分享在里边。总之，对于中国大学生物理学术竞赛而言，这是一本优秀的流体力学讲义，值得推荐给广大的参加比赛的同学以及对流体力学感兴趣的学生使用。
+\begin{flushright}
+贺佳琦\\
+October 8, 2021
+\end{flushright}
+
+\tableofcontents
+\mainmatter
+
+	\section{自由编辑指引}
+	初学\LaTeX ，不必在意一些细枝末节的代码，因为总有一天你会逐渐弄明白它们的含义和用途。阻碍初学者的一座大山就是TeXlive套装，安装比较麻烦，网上有教程。但是现在有Overleaf，直接在线编译，门槛低了。现在你只需要找个模板，往里面填上自己的文字、公式、图片，点击编译就能看到成品，真的，如果只是想写东西，\LaTeX 不用特意去学，你能轻松地拿来用\footnote{笔者注：本章必须对照源代码在线阅读。}。
+	
+	最简单的一个文档可以这样写（\%后面的是注释）：
+	{\ttfamily\bfseries
+	\begin{lstlisting}[language=tex]
+\documentclass{ctexart}  %导言区的开始标志
+\title{爱物理的无双麓叶的讲义}  %文档标题
+\author{叶凯帆}%作者名字
+\date{\today}  %显示今天的日期
+\begin{document}  %document环境的开始标志
+	\maketitle  %必写项，表明标题已经写完，进入正文了。或者理解为导言区的结束标志。
+	\section{第一节} %如果你希望它显示在目录里就去掉星号 %小节标题，也是小节开始的标志，这一小节结束的标志就是下一小节的开始标志。
+	\section{第二节}
+\end{document}  %document环境的结束标志
+	\end{lstlisting}}  
+	
+	
+	文字直接填在左边的源代码区相应位置即可。
+	\subsection{数学环境——公式}
+	如果你不擅长直接敲LaTeX公式，擅长MathType的可以用MathType导出LaTeX公式\footnote{官网下载就行，激活看这：Mathtype7下载，密钥激活(省钱向) - Evian的文章 - 知乎https://zhuanlan.zhihu.com/p/398655377，物理人写的教程看这：记住这俩软件, 可能会改变你的一生 / MathType 与 Mathematica 使小学生也能在知乎上写笔记! - 東雲正樹的文章 - 知乎
+https://zhuanlan.zhihu.com/p/427392956}，不会的话也可以在\href{https://www.latexlive.com/home##}{LaTeX公式编辑器}敲公式，完成后复制粘贴代码过来，注意放在恰当的公式环境里，比如一条公式可以放在equation环境，方程组则可以用array环境或者align环境等等。更多关于公式环境的教程：\href{https://zhuanlan.zhihu.com/p/266061200}{如何用latex排出好看的方程组？ - 半个冯博士的文章 - 知乎}、\href{https://www.jianshu.com/p/f5d475d6904e}{怎样用\LaTeX 优雅地打印数学的一切}。如果公式编辑器里找不到一些特殊字母或者符号，可以查阅\href{https://www.cnblogs.com/1024th/p/11623258.html}{LaTeX公式手册(全网最全)}，也可以去查找符号文件 \href{http://mirrors.ctan.org/info/symbols/comprehensive/symbols-a4.pdf}{symbols-a4.pdf} ，也可以去 \href{http://detexify.kirelabs.org/classify.html}{detexify} 网站手写识别，或者问我（QQ：2829259839）。另外还有数学公式识别软件 \href{https://mathpix.com/}{mathpix} 。
+	
+	下面简单介绍一下常用的数学环境。（下面的例子对照左侧源代码阅读，正文只呈现效果。）
+	
+	首先是行内公式，例如 $ \theta $ 是角度。行内公式使用 \verb|$  $| 包裹。
+	
+	行间公式不需要编号的，单独一条公式可以直接用equation环境，只需在环境名后面加个星号（*），例如
+	\begin{equation*}\label{eq:energy*}
+	E=mc^2
+	\end{equation*}
+	其中 $ E $ 是能量，$ m $ 是质量，$ c $ 是光速。
+	
+	如果希望某个公式带编号，并且在后文中引用可以参考下面的写法：
+	\begin{equation}\label{eq:energy}
+		E=mc^2
+	\end{equation}
+	\cref{eq:energy}是质能方程。
+
+	多行公式可以用align环境加以对齐（\&起作用），效果如下：
+	\begin{align}
+		\cos 2x &= \cos^2 x - \sin^2 x\\
+		&= 2\cos^2 x - 1
+	\end{align}
+	\verb|&| 是对齐的位置， \verb|&| 可以有多个，但是每行的个数要相同。如果想让上式统一编一个编号：
+	\begin{equation}
+	\begin{aligned}
+		\cos 2x &= \cos^2 x - \sin^2 x\\
+		&= 2\cos^2 x - 1
+	\end{aligned}	
+	\end{equation}
+	
+	矩阵的输入也不难，以下列出多样写法，哪种好用就套哪种。
+	\begin{equation}
+	\mathbf{X} = \left(
+	\begin{array}{cccc}
+		x_{11} & x_{12} & \ldots & x_{1n}\\
+		x_{21} & x_{22} & \ldots & x_{2n}\\
+		\vdots & \vdots & \ddots & \vdots\\
+		x_{n1} & x_{n2} & \ldots & x_{nn}\\
+	\end{array} \right)
+	\end{equation}
+
+	\begin{equation}
+	\mathbf{X} = 
+	\begin{pmatrix}
+		x_{11} & x_{12} & \ldots & x_{1n}\\
+		x_{21} & x_{22} & \ldots & x_{2n}\\
+		\vdots & \vdots & \ddots & \vdots\\
+		x_{n1} & x_{n2} & \ldots & x_{nn}\\
+	\end{pmatrix} 
+	\end{equation}
+	
+	\begin{equation}
+		\mathbf{X} = 
+		\begin{bmatrix}
+			x_{11} & x_{12} & \ldots & x_{1n}\\
+			x_{21} & x_{22} & \ldots & x_{2n}\\
+			\vdots & \vdots & \ddots & \vdots\\
+			x_{n1} & x_{n2} & \ldots & x_{nn}\\
+		\end{bmatrix} 
+	\end{equation}
+
+	\begin{equation}\label{矩阵形式的存活率}
+		\boldsymbol{S}_{j}^{l}(k)=\left[\begin{array}{ccccc}
+			0 & 0 & \cdots & 0 & 0 \\
+			s_{j}^{l}(1, k) & 0 & \cdots & 0 & 0 \\
+			0 & s_{j}^{l}(2, k) & \cdots & 0 & 0 \\
+			\vdots & \vdots & & \vdots & \vdots \\
+			0 & 0 & \cdots & s_{j}^{l}(n-1, k) & 0
+		\end{array}\right]
+	\end{equation}
+	高级矩阵（需要在导言区引用bNiceMatrix宏包，像下面这样）
+	{\ttfamily\bfseries
+		\begin{lstlisting}[language=tex]
+\documentclass{ctexart}  %导言区的开始标志
+\usepackage{nicematrix}  %使用高级矩阵需要引用的宏包，类似于C语言里的头文件，将一些功能打包，你用命令就能调用宏包里的功能。很多宏包打包的功能重复了，不影响使用，但是需注意你用到的命令必须要包含在至少一个你所引用的宏包里，否则会报错。初学者听不懂没关系。
+\title{爱物理的无双麓叶的讲义}  %文档标题
+\author{叶凯帆}%作者名字
+\date{\today}  %显示今天的日期
+\begin{document}  %document环境的开始标志
+	\maketitle  %必写项，表明标题已经写完，进入正文了。或者理解为导言区的结束标志。
+	\section{第一节}  %小节标题，也是小节开始的标志，这一小节结束的标志就是下一小节的开始标志。
+	\section{第二节}
+\end{document}  %document环境的结束标志
+	\end{lstlisting}}  
+	\begin{equation}
+		\begin{bNiceMatrix}[first-row,first-col]
+			&\rho_{\infty}&V_{\infty}&c&R&\mu_{\infty}&a_{\infty}\\
+			M&1&0&0&1&1&0\\
+			L&-3&1&1&1&-1&1\\
+			T&0&-1&0&-2&-1&-1
+		\end{bNiceMatrix}
+	\end{equation}
+	
+	分段函数这些可以用 \verb|case| 环境，但是它要放在数学环境里面。
+\begin{equation}
+	f(x) =
+	\begin{cases}
+		0 &  x \text{为无理数} ,\\
+		1 &  x \text{为有理数} .
+	\end{cases}
+\end{equation}
+	在数学环境里面，字体用的是数学字体，一般与正文字体不同。假如要公式里面有个别文字，则需要把这部分放在 \verb|text| 环境里面，即 \verb|\text{文本环境}| 。
+
+公式中个别需要加粗的字母可以用 \verb|$\bm{math symbol}$| 。如 $ \alpha\bm{\alpha} $ 。
+
+方程组的编辑自由度很大，有非常多等价写法，可以用align+cases或者equation+cases或者equation+array环境，效果如下：（spacing的作用是调整公式内行间距）
+\begin{align}
+	\begin{cases}
+		[R]&=M^{1} L^{1} T^{-2}\\
+		[\rho_{\infty}]&=M^{1} L^{-3} T^{0}\\
+		[V_{\infty}]&=M^{0} L^{1} T^{-1}\\
+		[c]&=M^{0} L^{1} T^{0}\\
+		[\mu_{\infty}]&=M^{1} L^{-1} T^{-1}\\
+		[a_{\infty}]&=M^{0} L^{1} T^{-1}
+	\end{cases}
+\end{align}
+
+\begin{equation}
+	\begin{cases}
+		[R]&=M^{1} L^{1} T^{-2}\\
+		[\rho_{\infty}]&=M^{1} L^{-3} T^{0}\\
+		[V_{\infty}]&=M^{0} L^{1} T^{-1}\\
+		[c]&=M^{0} L^{1} T^{0}\\
+		[\mu_{\infty}]&=M^{1} L^{-1} T^{-1}\\
+		[a_{\infty}]&=M^{0} L^{1} T^{-1}
+	\end{cases}
+\end{equation}
+
+\begin{spacing}{2}%%行间距变为double-space
+	\begin{equation}
+		\left\{
+		\begin{array}{l}
+			\displaystyle  \frac{\partial u_{1}}{\partial t}=
+			a^{2}\left(\frac{\partial ^{2} u_{1}}{\partial x^{2} }+\frac{\partial ^{2} u_{1}}{\partial y^{2} }\right)+f(x,y)\  ,\quad (x,y)\in\{\boldsymbol{R_{I}}\}\\
+			\displaystyle    f(x,y)=-\frac{P}{c\rho A}  e^{-10^{-2}(x-x_{0})^{2}-10^{-2}(y-y_{0})^{2}}\  ,\quad (x,y)\in\{\boldsymbol{R_{I}},\boldsymbol{R_{II}}\}\\
+			\displaystyle     \frac{\partial u_{2}}{\partial t}=
+			a^{2}\left(\frac{\partial ^{2} u_{2}}{\partial x^{2} }+\frac{\partial ^{2} u_{2}}{\partial y^{2} }\right)\  ,\quad (x,y)\in\{\boldsymbol{R_{II}}\}\\
+			\displaystyle      \frac{\partial u_{3}}{\partial t}=
+			a^{2}_{3}\left(\frac{\partial ^{2} u_{3}}{\partial x^{2} }+\frac{\partial ^{2} u_{3}}{\partial y^{2} }\right)\  ,\quad 	(x,y)\in\{\boldsymbol{R_{III}}\}
+		\end{array}
+		\right.
+	\end{equation}
+\end{spacing}
+
+\begin{spacing}{2}%%行间距变为double-space
+	\begin{equation}
+		\begin{cases}
+			\displaystyle  \frac{\partial u_{1}}{\partial t}=
+			a^{2}\left(\frac{\partial ^{2} u_{1}}{\partial x^{2} }+\frac{\partial ^{2} u_{1}}{\partial y^{2} }\right)+f(x,y)\  ,\quad (x,y)\in\{\boldsymbol{R_{I}}\}\\
+			\displaystyle    f(x,y)=-\frac{P}{c\rho A}  e^{-10^{-2}(x-x_{0})^{2}-10^{-2}(y-y_{0})^{2}}\  ,\quad (x,y)\in\{\boldsymbol{R_{I}},\boldsymbol{R_{II}}\}\\
+			\displaystyle     \frac{\partial u_{2}}{\partial t}=
+			a^{2}\left(\frac{\partial ^{2} u_{2}}{\partial x^{2} }+\frac{\partial ^{2} u_{2}}{\partial y^{2} }\right)\  ,\quad (x,y)\in\{\boldsymbol{R_{II}}\}\\
+			\displaystyle      \frac{\partial u_{3}}{\partial t}=
+			a^{2}_{3}\left(\frac{\partial ^{2} u_{3}}{\partial x^{2} }+\frac{\partial ^{2} u_{3}}{\partial y^{2} }\right)\  ,\quad 	(x,y)\in\{\boldsymbol{R_{III}}\}
+		\end{cases}
+	\end{equation}
+\end{spacing}
+	
+	以上仅简单介绍了基础的使用，对于更复杂的需求，可以阅读相关的宏包手册，如 \href{http://texdoc.net/texmf-dist/doc/latex/amsmath/amsldoc.pdf}{amsmath}。
+
+\subsection{加载PDF文件}	
+	如果你有已写好的PDF文件想要合并到此讲义里，可以用\href{https://tools.pdf24.org/zh/}{PDF编辑工具}编辑，然后在相应源代码位置写以下代码加载：
+	{\ttfamily\bfseries
+		\begin{lstlisting}[language=tex]
+\includepdf[pages={1-12}]{文件名.pdf} 
+	\end{lstlisting}}
+
+\subsection{插入图片}
+	关于图片，先把图片文件（jpg、png、pdf等等格式）上传到左边的文件列表里的image文件夹，然后在相应位置写以下代码加载：
+	{\ttfamily\bfseries
+		\begin{lstlisting}[language=tex]
+\begin{figure}[H]%H是指放在当前位置
+	\centering
+	\includegraphics[width=0.6\textwidth]{文件名.png} %png根据文件格式加以修改，图片宽度0.6可以根据需要改，范围大概在[0.5-1.1]比较合适
+	\caption{标题}
+	\label{标签} 
+\end{figure}
+	\end{lstlisting}}
+	多图并排可以上网搜索（“latex 多图并排”）。
+	
+	如有任何编译问题，请联系我（QQ：2829259839）。
+\chapter{流体的模型和物理描述}
+\begin{introduction}
+	\item 浅谈流体是什么
+	\item 三种流体模型、连续介质假设及其适用范围
+	\item 流体的主要物理属性
+	\item 非牛顿流体
+\end{introduction}
+\section{浅谈流体是什么}\label{流体是什么}
+流体包括气体和液体，在我们日常生活中起着极为重要的作用。我们每天都要呼吸和喝水，还有血液这种关乎性命的流体在人类的心血管系统中循环。还有海洋和大气。汽车的轮胎内、油箱、散热器、发动机燃烧室、排气管、蓄电池、空调系统、挡风玻璃刮水器的水槽、润滑系统以及液压系统内都有流体。下次你再看到大型挖掘机时，你可以数一数它上面有几个使挖掘机工作的液压油缸。大型喷气式飞机有数十个这种油缸。
+
+风车利用的是空气的动能，水电站利用的是水的势能。有时，流体还会刻画出美妙的风景画。我们经常长途跋涉去旅行就为了看流体的流动（海浪）。现在是时候看看流体力学能告诉我们什么了。
+
+流体是什么？与固体不同，流体是一种可以流动的物质，它能适应我们将其放入的任何容器内壁的形状。流体无法承受和它的表面相切的力（切应力/剪切力），更严格地说，\textbf{流体是在连续介质假设下，在任意点上都不能承受切应力的物质，只要有切应力作用，流体就会用连续的变形来平衡切应力。}但流体可以承受垂直于其表面的作用力。一些材料，比如沥青，放在容器内需要很长的时间才能适应其内壁的形状，但最后还是可以适应，所以仍然把它归入流体。
+
+你可能好奇，为什么我们把液体与气体都归在一起并把它们叫做流体。毕竟你可能说，液态水不同于水蒸气，就像它不同于冰一样。实际上，冰像很多固体一样，内部原子都排列在一种相当稳定的三维晶格阵列中。然而，水蒸气及液态水则没有任何这种有序的长程结构。\cite{哈里德：物理学基础}
+
+关于流体与固体的区别的进一步的讨论我放在了第\ref{流体与固体的本质区别}节。
+\section{连续介质假设及其适用范围}
+\subsection{描述流体的三种模型}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{流体的描述：控制体模型.jpg} 
+	\caption{有限控制体模型}
+	\label{流体的描述：有限控制体模型} 
+\end{figure}
+
+我们经常脱口而出流体压力、密度等等术语，而没有对其在流体力学中的定义进行严格讨论。这牵扯到一个很深刻的问题——如何描述流体？理论力学里我们常常假设研究对象是刚体，那在流体力学里我们假设流体是什么样的，换言之，我们用来描述流体的物理模型是什么？
+
+\textbf{1.\ 有限控制体模型}
+
+如\cref{流体的描述：有限控制体模型} 所示，考察一个普遍的流场，其流线（速度相同的流体微团的连线，流体微团的概念很快就会介绍）已绘出。从流场中选取一块有限大小的闭合体积元，这块体积元圈定了一个\textbf{控制体}$\cal{V}$，控制体表面的封闭曲面则刻画了一个\textbf{控制面}$\cal{S}$。控制体可以是固定在空间的，任流体流过它，如\cref{流体的描述：有限控制体模型} 左侧所示。控制体也可以是随着流体流动的，但无论控制体流到哪里，控制体内总是同一堆流体，也就是说控制体随着内部流体运动将可能发生形变，如\cref{流体的描述：有限控制体模型} 右侧所示。不过，无论哪种情况，控制体总是流体的一个相当大的有限区域。基本物理原理往往可以应用于\textbf{控制体}内的流体，或者穿过\textbf{控制面}的流体（如果控制体固定在空间中）。与一次性着眼于整个流场相反的是，有了有限大小的控制体模型，我们就可以集中精力研究有限区域内的流体。
+
+
+\textbf{2.\ （极限）流体微团模型}
+
+使用“极限”而非“无限小”来描述流体微团，背后有着丰富的含义，也是本节要着重介绍的内容，目前你只需要明白“流体微团”是含有足够多流体分子的“质点”。如\cref{流体的描述：极限微团模型} 所示，考察一个普遍的流场，其流线已绘出。想象一个极小的、体积为$\dif\cal{V}$的流体微团，它小到可以使用微积分的程度，但是它又大到内部含有足够多的流体分子，一句话概括：\textbf{“流体微团”是含有足够多流体分子的“质点”}。如果你不理解这句拗口的话，没关系，在第\ref{密度与连续介质假设的提出} 小节中，我会结合示意图进行定量的说明。正是这样一个模型或者说假设，使得流体可被视作连续的介质，因此也管它叫做\textbf{连续介质假设}。
+
+流体微团可以是固定在空间中的，任流体流过它，如\cref{流体的描述：极限微团模型} 左侧所示。流体微团也可以是随着流体流动的，速度为$V$，即一直跟踪同一个流体微团在流场中的运动，如\cref{流体的描述：极限微团模型} 右侧所示。同样地，与一次性着眼于整个流场相反的是，基本物理原理往往可以直接用在\textbf{流体微团}上。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{流体的描述：微团模型.jpg} 
+	\caption{极限微团模型}
+	\label{流体的描述：极限微团模型} 
+\end{figure}
+
+\textbf{3.\ 分子模型}
+
+实际上，流体的运动是其内部原子、分子运动的平均结果。因此，流体的第三种模型是微观描述，将自然界的基本热力学定律直接应用于原子和分子，使用恰当的统计平均法来定义流体的许多物理属性。这种描述方法是基于分子动力学理论，这是一种优雅的方法，从长远来看有着许多优点。然而，这超出了本书的讨论范围。
+
+总而言之，尽管在推导流体流动的普遍方程时有很多变化，但所用到的流动模型通常都可以归为上述三种模型之一。
+\subsection{流体密度与连续介质假设的提出}\label{密度与连续介质假设的提出}
+不妨跟着我分析一下，我们知道流体是物质分子的聚集体，气态的流体分子间距较大，液态的流体分子间距较小。但是与分子本身的尺寸相比，分子间距算是非常大的了。不同于固体分子固定在晶格中，流体分子是自由的且不断进行热运动的。这么来看，流体密度或单位体积流体的质量，就没有了确切的含义，因为选定体积元内的分子数量由于热运动而不断变化，也就是所谓的“粒子数涨落”。
+
+如果体积元与分子间距的立方相比较大，这种涨落效应会显得很微弱，尽管仍然有许多粒子在体积元的边界上与外界发生交换，但体积元内的分子数量近乎保持恒定。如果选择的体积元太大，体积元内部的密度就有可能不均匀，换言之，密度的值依赖于体积元的形状，即使保持体积大小不变，换个形状可能密度就变了。上述情形想象起来不容易，在\cref{连续介质假设}中作了进一步阐明，($b$)展示了选定体积元$\mathcal{\delta^{\circ} V}$内的分子总质量$\delta m$计算出来的密度值随体积元的体积大小变化的情况。可以认为存在一个临界体积$\delta^{\circ} \mathcal{V}^{*}$，选定的体积元如果小于临界体积，分子涨落很明显，相反，如果大于临界体积，内部密度又不均匀。综上，流体的密度$\rho$最好定义为
+\begin{equation}
+	\rho=\lim_{\delta^{\circ} \mathcal{V} \to \delta^{\circ} \mathcal{V}^{*}} \frac{\delta m}{\delta^{\circ} \mathcal{V}}
+\end{equation}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{连续介质假设.png} 
+	\caption{连续介质流体密度的极限定义：($a$)\:在密度连续变化的流体区域中选取的一块体积元\quad($b$)\:选取不同大小的体积元计算出的密度值}
+	\label{连续介质假设} 
+\end{figure}
+
+更一般地，不仅密度如此，一切与流体有关的统计平均值，都满足\cref{连续介质假设2}展示的特点，流体微团尺度越小，统计特征(密度等)的不确定度而变大。因此，在分析流体微团时，需要该微团足够小，以反映出流动的细节；同时，还需要该微团足够大，以包含足够多的分子，使得统计特征不确定度较小。最后多说一句我偏爱“流体微团”这个词，是因为“微”表其小，而“团”显其大。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{连续介质假设2.png} 
+	\caption{随着微团尺度变小，统计特征(密度等)的不确定度而变大}
+	\label{连续介质假设2} 
+\end{figure}
+
+
+
+\begin{note}
+	很多流体力学教材避开了这部分细致的讨论，先给出连续介质假设，接着在连续介质假设前提下，把流体微团看作质点，在表达式上取体积趋于零：
+	\begin{equation}
+		\rho=\lim_{\delta V\to 0}\frac{\delta m}{\delta V}
+	\end{equation}
+	这种处理在数学上是合理的，但容易误导初学者，也没有把“此质点非理想质点”背后的物理思想表达出来。读过本讲义的读者应有这种taste！\href{https://www.zhihu.com/question/26549857/answer/33270969}{(什么是对物理的 taste？ - 知乎)}
+	
+	在此节选朗道《流体动力学》第一章理想流体的开头第一段，以飨读者：
+	
+	对液体和气体运动的研究就是\textbf{流体动力学}的内容。流体动力学所研究的现象具有宏观性质，所以在流体动力学中可以把流体看做连续介质。这意味着，可以认为任何流体微元仍然是足够大的，以至于其中还包含着数目极多的分子。因此，当我们说到无穷小的体微元时，总是指“物理上”无穷小的体微元，换言之，它与所考虑的物体体积相比足够小，但与分子间距离相比却足够大。在流体动力学中，对“流体微团”、“流体点”之类的术语都应当这样理解。例如，在论及某流体微元的位移时，我们并不是指个别分子的位移，而是指包含大量分子的流体微元整体的位移，尽管在流体动力学中仍把后者看做一个点。\cite{朗道：流体动力学}
+\end{note}
+流体力学是一门宏观力学，研究的是流体宏观的平衡与运动规律，对微观的分子热运动不感兴趣，故只考虑分子热运动的统计平均特性即可。为此，欧拉在1753年首先提出的连续介质力学模型的假设如下：
+
+流体是由\textbf{流体微团（其他教材的叫法：流体微元、流体点、质点）}组成的，这个微团满足：
+
+\textbf{(1)\ 体积充分大，使得微团内的统计平均特性不受个别分子热运动的影响。}
+
+\textbf{(2)\ 体积充分小，使得在几何上可以将它看作一个点。}
+
+在这个假设前提下，首先可以不考虑分子间隙和分子热运动对宏观物理量的影响，认为流体就是由这些微团连续分布整个空间；其次表征流体属性的物理量，如密度、速度、压强、温度等在流体连续流动中是时间和空间坐标的单值连续可微函数。这样就可利用数学分析（或者高等数学）的方法和工具来研究并确定流体的平衡与运动规律了。
+
+尽管流体力学属于连续介质力学的范畴，但有时还要利用分子运动论和统计力学的观点来解释流体的物理现象和运动规律。例如流体黏性的产生及随温度的变化原因是各流层中流体分子的热运动及相互作用的结果等。
+
+\subsection{连续介质假设的适用范围}
+在通常的工程问题中，连续介质假设是完全合理的。研究表明，在标准状态下（1个标准大气压，温度为 \SI{0}{\degreeCelsius} ），对于空气而言，\SI{1}{\cubic\milli\meter} 体积中含有 \num{2.7e16} 个空气分子，分子平均自由程为 \SI{7e-5}{\milli\meter}；对于水来说则含有 \num{3.4e19} 个水分子，分子平均自由程为 \SI{3e-5}{\milli\meter}。可见，在工程问题中，所要研究的流体线度或流体微团的大小远远大于分子的大小及其运动尺度，所以流体质点（微团）中包含有足够多的分子，微团的物理特性不会受个别分子热运动的影响。但是，当所研究问题的特征尺度（比如圆柱绕流问题特征尺度可以是圆柱直径）接近或小于分子运动平均自由程时，连续介质假设就不再适用了。例如研究火箭重返大气层时，在高空稀薄气体中飞行，空气的特征尺寸较大（120km海拔高空处空气分子的平均自由程为13m），与火箭的特征尺寸有相同的数量级，此时，连续介质假设就不再合理，需要用分子运动论与统计力学的微观方法进行研究。\cite{韩占忠：工程流体力学基础}   
+
+
+\section{流体的主要物理属性}
+流体是一种连续介质，流体力学是从宏观上研究流体微团的运动，流体的物理属性也是在连续介质假设的前提下定义的，这些物理量是时间和空间的单值连续可微函数。\cite{韩占忠：工程流体力学基础}   
+
+
+
+\subsection{压缩性的讨论}
+日常生活中总能观察到流体受到外界压力的影响会压缩膨胀，该如何定量地表述这一现象？将是这一小节所要回答的问题。
+
+膨胀是压缩的逆过程，因此分析清楚压缩过程即可。拿空气和水做对比实验，如果施加给一团气体和一坨水相等大小的压强，会观察到气体体积变化比水更明显。这一现象说明水和空气的压缩性不同，如果能定义一个参数，参数的值越大，流体越容易被压缩，不就可以定量表述了吗？
+
+一个自然的想法是，定义一个参数$\beta$，它等于流体体积的相对变化量比外界压强的变化量，用体积的相对变化量是因为体积是广延量，而压缩性显然不是广延量，同种流体压缩性一样，与体积大小无关。或者这样理解，考虑\textbf{单位体积}的流体在外界压强改变$\Delta p$时，体积的变化量$\Delta V$，可得参数$\beta$的表达式
+\begin{equation}\label{体积压缩系数}
+	\beta=-\displaystyle\frac{\Delta V/V}{\Delta p}=-\displaystyle\frac{1}{V}\frac{\Delta V}{\Delta p}
+\end{equation}
+“单位体积”就体现在$\displaystyle\frac{1}{V}$上，负号来源于参数的物理意义，实验观察到压强增大，流体的体积往往变小，加个负号能使$\beta$保持为正数，便于比较大小。
+
+实际上，参数$\beta$在流体力学里称为\textbf{体积压缩系数}，被用于描述流体的压缩性。流体的压缩性在工程上常用体积弹性模量$E$来表示，二者关系为
+\begin{equation}
+	E=\displaystyle\frac{1}{\beta}
+\end{equation}
+
+
+\begin{note}
+	当压强增量很小时，\cref{体积压缩系数}也可写成微分形式
+	\begin{equation}
+		\beta=-\displaystyle\frac{\dif V/V}{\dif p}
+	\end{equation}
+\end{note}
+类似的，还可以定义\textbf{体积膨胀系数}$\alpha$来表述流体的体积膨胀性（Expansibility），但这回跟压强没关系了，这是用来描述热胀冷缩的，$\alpha$定义式为
+\begin{equation}
+	\alpha=\displaystyle\frac{\dif V/V}{\dif T}
+\end{equation}
+
+
+
+\begin{example}
+	
+\textbf{轮胎打气问题：}给轮胎打气时，打得越满越费劲，如何解释这一现象？（提示：合理假设简化问题，抓住主要矛盾）
+
+\begin{solution}
+	
+	打气的过程中，在变化的宏观物理量有筒内气体密度$\rho$。简单起见，假设打气筒内为理想气体，打气过程为等温压缩过程。
+	
+	理想气体状态方程为$pV=nRT$，已知密度定义式$\rho=\displaystyle\frac{m}{V}$，质量与摩尔质量的关系式$m=nM$，代入状态方程可得
+	\begin{equation}\label{理想气体状态方程变形}
+		p=\displaystyle\frac{\rho RT}{M}
+	\end{equation}
+	\cref{理想气体状态方程变形} 中，$R,M$是常数，对$p(\rho,T)$做全微分，得
+	\begin{equation*}
+	dp=\displaystyle\frac{RT\dif\rho+\rho R\dif T}{M}
+	\end{equation*}
+	等温过程$dT=0$
+	\begin{equation*}
+		dp=\displaystyle\frac{RT\dif\rho}{M}
+	\end{equation*}
+	由课本的\,1-7\,式，即流体质量守恒，可得$dm=\rho dV+Vd\rho=0$，代入\cref{体积压缩系数}
+	\begin{equation}\label{打气问题的解}
+		\beta=-\displaystyle\frac{\dif V/V}{\dif p}=\displaystyle\frac{\dif \rho/\rho}{\dif p}=\displaystyle\frac{M}{\rho RT}=\displaystyle\frac{1}{p}
+	\end{equation}
+\cref{打气问题的解}表明，理想气体的体积压缩系数与气体压强成反比，气体压强越大，越不容易被压缩。
+\end{solution}
+\end{example}
+
+\subsection{流体与固体的本质区别——运动着的流体才能产生剪切应力}\label{流体与固体的本质区别}
+在\ref{流体是什么}节中，我们已经提了一下流体与固体的区别，但并没有严格地分析讨论，一切都将在这一节讲清楚，接着在此基础上讨论一下流体的粘性。
+
+流体的很多性质是与固体中的定义相通的，比如密度、压力、温度等。但也有其独特的属性，这里面最典型的就是区分流体和固体的力学特性——粘性（Viscosity）。此外，液体具有表面张力、气体具有易压缩性，这些都是流体特有的属性。
+
+还是从实验现象谈起，当流体的内部只存在正压应力时，可以和固体一样产生变形并保持静止。当流体内部受到剪切力时，会产生剪切变形，但这种剪切变形完全产生不了方向相反的剪切力。于是在剪切力的作用下流体将不断地变形下去，只要剪切力存在，就不会停止。这种情况有点类似于固体受力远超过其强度的情况，只不过流体对于剪切力没有任何“强度”可言，任何小的剪切力都将使其不断变形下去。因此，流体与固体的本质区别是：\textbf{流体仅仅依靠“静止变形”是无法在内部产生剪切应力的}。
+\begin{note}
+“静止变形”指的是从一个形状变形到另一个形状，且初态和末态均为静止状态的过程，实际上中间过程是运动的，如果形变非常缓慢，小于流体的弛豫时间，中间过程就可看作是准静态过程，可认为不产生剪切应力。
+\end{note}
+在微观上，流体的剪切变形不能产生剪切力可以这样理解：对于流体而言，分子之间没有保持任何固定结构的意愿，分子都是随遇而安的，只要它们能互相挨在一起就行，和谁挨着，以何种形式挨着都无所谓。剪切变形后分子虽然移动了，但它们与相邻流体分子之间的距离并没有改变，即没有压缩或者拉伸，因此也就没有固体那样的剪切变形所带来的弹性剪切力。
+
+然而，我们发现，河水在沿着倾斜的河床流动的时候可以是匀速的，也就是说水与斜面之间是有摩擦力来平衡沿斜面的重力分量的，这个摩擦力当然是剪切力。没错，这时确实有剪切力，因为：\textbf{流体在运动状态下内部是可以产生剪切力的}。流体的这个性质称为\textbf{粘性}，将在下一节（\ref{粘性的定性讨论——基于分子运动论}节）中详细讨论。
+
+这里我们来提出一个有趣的\textbf{“反例”}，有时我们明明看到水是可以在斜面上静止的，不但在斜面上，在垂直的墙壁上和玻璃上也可以。比如生活中常看到静止地依附于玻璃窗上的水滴。从形式上来看，这时的水滴是一种悬臂结构，而经验表明这种悬臂是典型的内部存在剪切应力的结构。那么，这种静止的流体内部，不是应该存在剪切应力了吗？其实不然，事实是这样的流体内部也是不存在剪切应力的，要想分析这个问题，就要考虑到液体的表面张力特性。我们将在后面介绍表面张力时，就这个问题做进一步的分析。\cite{王洪伟：我所理解的流体力学}
+
+\subsection{粘性的定性讨论——基于分子运动论}\label{粘性的定性讨论——基于分子运动论}
+当流体受到外界的剪切力作用的时候，它会不断地变形下去，在这种连续的剪切变形作用下的流体内部会产生剪切应力，这种性质称为流体的粘性。我们通常见到的液体和气体都有粘性，只有超流体可以认为是没有粘性的。
+
+我们都知道蜂蜜的粘性要远大于水的粘性，现在来分析一下决定流体粘性力大小的因素。仍然用固体之间的摩擦力做类比，对于沿斜面下滑的方块而言，摩擦力$f$等于摩擦系数$\mu$与它们相互挤压的力$N$的乘积
+\begin{equation}
+	f=\mu N
+\end{equation}
+摩擦力$f$沿着斜面，压力$N$垂直于接触面，摩擦系数$\mu$体现了两个物体的分子作用力大小及接触面的粗糙程度，这比较容易理解。但摩擦力为什么和压力$N$成正比呢？毕竟挤压力与摩擦力是垂直关系，应该没有沿摩擦力方向的分量才对。相信大家都曾有过这种困惑。
+
+原因是这样：挤压力越大，则两物体的接触面积就越大，这个\textbf{接触面积与挤压力之间基本上是线性关系}，因此摩擦力也与挤压力呈正比。如果是分子级别光滑的两个物体相接触，则摩擦力就基本上与挤压力无关了。
+
+固体的动摩擦系数与静摩擦系数一般并不相等，因为它们的产生机理不完全相同。静摩擦完全是力的平衡，而动摩擦则还包含\textbf{动能向内能的转化过程}。当两个固体靠在一起并相对滑动时，在摩擦面上不但发生跟静摩擦时类似的力的作用，还会发生两物体分子之间的键不断地被打破，同时又不断形成新的键，并且还伴随着分子和分子团从原物体上脱落等过程。这些过程中会伴随着分子振动能量的变化以及分子运动方向性的混乱，所以摩擦过程一定是产生热量的。\cref{固体动摩擦力的微观解释}显示了接触面上发生的3种典型的现象。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{固体动摩擦力的微观解释.jpg} 
+	\caption{固体动摩擦力的微观解释}
+	\label{固体动摩擦力的微观解释} 
+\end{figure}
+
+从上一节的分析我们知道，当流体与固体相接触时，紧挨着固体的流体分子会被吸附在固体上随之运动。因此，\textbf{所谓流体与固体之间的摩擦力其实也就是流体之间的摩擦力}。这也就是一般书籍中并不特别区分流体内部的摩擦力和流体与固体之间的摩擦力的原因。
+
+液体与固体的接触是分子级别的全面接触，因此摩擦力应该与挤压力无关。这个挤压力就是指流体内部的压力(本讲义中若非特别强调，压力都是指压强，即单位面积上的压力)，这可以解释为什么\textbf{液体的粘性力大小基本与压力无关}。\textbf{但流体的粘性力大小与温度却有着极大的关系}，我们都知道凉的糖浆较粘稠，加热后粘性降低，\textbf{一般对于液体来说温度越高粘性力越小}。气体的粘性力较小，生活中一般较难察觉，但精密的实验已经证实，\textbf{与液体相反，对于气体来说温度越高粘性力越大}。液体和气体粘性的这些特性与产生粘性的物理本质是直接相关的。
+
+对于液体而言，如果两层之间的运动速度不同，上层速度快的分子在扫过下层速度慢的分子时，会通过吸引力和排斥力带动下层运动。这种运动包含了平动和转动，下层分子平动速度的增加相当于是从上层获得了额外的动能，而下层分子转动速度的增加相当于是将一部分从上层分子获得的动能转化成内能了。\textbf{这个过程中上层分子的动量会减小，下层分子的动量会增加，动量传递靠的就是两层之间的摩擦力作用}。这个摩擦力对于包含上下层分子的整个体系来说是内力，所以总的动量应该是守恒的。\cref{液体内粘性力的微观解释}显示了上层液体比下层液体速度快时，对下层分子的拖动作用。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{液体内粘性力的微观解释.jpg} 
+	\caption{液体内粘性力的微观解释}
+	\label{液体内粘性力的微观解释} 
+\end{figure}
+
+上面讨论的由分子力引起摩擦力的作用与固体有些类似，实际上对于液体的摩擦力来说还有一个不同于固体的作用，那就是液体分子并不会安分地分层流动，而是会互相扩散。也就是说\textbf{各层的分子会有与运动方向垂直的横向运动，上层的分子会跑到下层去，下层的分子也会跑到上层去}。这样，上层的分子进入下层后就会推动下层的分子运动得快一些，而下层的分子跑到上层去后会拖累上层分子使之速度减慢。\textbf{这种作用也可以解释为两层之间的动量传递}，既然是沿运动方向的动量传递，就有沿这个方向的力，这个力就是摩擦力。对于做\textbf{层流}运动的液体而言，这个作用远小于前述的分子吸引力和排斥力的作用，因此经常可以忽略，而认为液体的粘性就是由分子力造成的，其中吸引力经常是主要的。
+
+我们之前曾经说过，液体的分子是随遇而安的，因此不会产生静摩擦力。当运动时，液体上下层分子之间的引力又是如何产生了沿接触面方向的分量的呢？这其实与分子的形状和极性相关，如果要精确分析，需要的是更深入的理论物理的知识，但我们这里至少可以进行一下定性的分析。
+
+在我们的生活经验中，那些有机物的液体一般都具有较大的粘性，比如油漆、蜂蜜、血液等。这些物质的分子较大，且形状不规则，具有极性，运动时自然不利索，分子之间容易纠缠不清。以甘油为例，它的分子并不是很大，但形状较为不圆滑，且具有极性，当甘油分子通过粗糙表面时就很容易卡住，甘油分子之间也较容易纠缠，因此甘油的粘性较大。汞的分子比甘油分子还大，但呈球形，而且没什么极性，因此汞的粘性虽然比水大得多，但比起同分子量的有机物来说还是很小的。\cref*{液体内粘性力的微观解释}（b）显示了一种有机物分子的运动，其中用虚线包围起来表示的是一个分子，可以直观地看出，比起\cref*{液体内粘性力的微观解释}（a）中的水分子来说，这种有机物的分子个头大，形状不规则，互相的纠缠必然大，粘性也就会比较大。
+
+当液体的温度升高时，单个分子的振动加强，分子与分子之间的纠缠就更容易松脱。手机放在泥浆上面可以保持相当长的一段时间不沉下去，如果这时候恰巧来了电话手机振动起来的话，很快就会沉下去。液体内部的粘性与此类似，因此温度升高时液体的粘性是减小的，并且通常分子之间纠缠越强的液体对温度越敏感。分子呈长条状的糖浆的粘性随温度的升高迅速降低，而分子呈球形的汞的粘性随温度的变化就要小得多。
+
+然而，也不是所有液体的粘性都是随温度的升高而降低的，这是由粘性产生的机理决定的。比如，单一成分的润滑油的粘性随温度的升高降低很快，这给发动机这类工作温度范围大的机械部件的润滑带来了很大的问题。为了克服这一点现代的润滑油里面添加了这样一种物质，当温度升高时，它的分子从球形伸展为长条状，这使得该物质的粘性是随温度的升高而增大的。添加了这种物质后，润滑油的粘性就对温度不那么敏感了。
+
+
+
+% \subsection{粘性的定量讨论——牛顿内摩擦定律（待编辑）}\label{粘性的定量讨论——牛顿内摩擦定律}
+
+% 讨论1：流体具有粘性的原因
+
+% 流体具有粘性主要有两个原因：
+
+% 一是分子之间的内聚力；
+
+% 二是分子之间热运动所带来的动量交换。（两列并行火车互扔砖块的例子）
+
+% 讨论2：粘度与温度的关系
+
+% 试验表明：流体的动力粘度随压力的变化很小，但随温度的变化很大。
+
+% 当温度升高时，液体的粘度变小；（对于液体，其粘度主要来自分子间的内聚力）
+
+% 当温度升高时，气体的粘度变大。（对于气体，其粘度主要来自分子间热运动带来的动量交换）
+
+% 讨论3：粘度的两种表示方法——动力粘度与运动粘度
+
+% 运动粘度（ Kinamatic Viscosity），其定义式为
+% \begin{equation}
+% 	\nu=\frac{\mu}{\rho}
+% \end{equation}
+
+% $\mu$是动力粘度，单位 \si{\pascal\second}
+
+% $\nu$是运动粘度，单位 \si[per-mode=symbol]{\meter\per\second}
+
+% 常温下水的动力粘度约为 \SI{e-3}{\pascal\second}
+
+% 常温下水的运动粘度约为 \SI[per-mode=symbol]{e-6}{\meter\per\second}
+
+% 讨论4：理想流体与粘性流体
+
+% 理想流体是假定流体不存在粘性。
+
+% 这种流体在运动时，不仅内部不存在摩擦力，而且与固体相接触的边界上也不存在摩擦力。
+
+% 理想流体与粘性流体的区别，理想流体相当于给每一个流体微团都穿上无比光滑的外衣，粘性流体相当于给每一个流体微团都穿上带毛刺的外衣。
+
+% 实际流体都是有粘性的，理想流体只是一种假设。
+
+% 严格满足牛顿內摩擦定律，且粘度不变的流体称为牛顿流体，其它流体称为非牛顿流体。（塑性流体举例：牙膏）
+
+\chapter{液体的表面张力}
+表面张力现象发生在两相之间的界面上，最典型的就是液体的表面，也就是液-气相界面上的表面张力现象。我们生活中常见的表面张力现象有：液滴、试管或量筒内水面呈凹液面、毛细现象、水黾能够站立在水面上等等。
+\begin{figure}[htbp]
+    \centering
+    \subfigure[浸润液体在毛细管里上升]{
+    \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=1.5in]{1.jpg}
+    %\caption{浸润液体在毛细管里上升}
+    \end{minipage}%
+    }%
+    \subfigure[水黾能够站立在水面上]{
+    \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=1.5in]{2.jpg}
+    %\caption{水黾能够站立在水面上}
+    \end{minipage}%
+    }%
+    \centering
+\end{figure}
+
+\section{表面张力的描述}
+表面张力的作用位置是流体界面，界面上的每一个质点都受到周围界面质点对它的表面张力。
+
+表面张力的大小由如下公式表达：
+\begin{equation}
+    F=\gamma \cdot L 
+\end{equation}
+或者用微分形式更严谨一些：
+\begin{equation}
+    dF=\gamma \cdot dL 
+\end{equation}
+$F$为表面张力的大小，$L$为表面张力作用的长度，$\gamma$（有的文献会用$\sigma$来表示）是表面张力系数，是界面本身的一个性质，主要由两相的物质组成、温度等决定，单位是$N/m$。
+
+界面上某一质点受到的表面张力的方向是：在界面在该处的切面上，垂直于L，趋向于使界面面积缩小。
+
+大家可以借助下图所示这个模型来理解表面张力：
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{3}
+    \caption{表面张力基本模型}
+\end{figure}
+一个置于水平面内的金属丝围成的框，中间有一根可以活动的棒，棒与框之间无摩擦，棒的左侧形成了一层液膜。那么现在如果不对棒施加外力的话，由于表面张力的作用，液膜的面积会趋于收缩，导致棒会趋于向左运动。这时，我们对棒施加一个拉力$T$，让棒保持静止，即拉力$T$和表面张力平衡。但是这里大家需要注意，液膜的上下表面都是与空气接触的，也就是存在两个界面，因此表面张力应该为$2F$。人们通过实验发现，$F$（也就是$\frac{T}{2}$）和$L$是成正比的，而且这个比例系数是由两相界面的性质决定的，因此人们使用比值定义法定义了表面张力系数$\gamma=\frac{F}{L}$。
+
+至于表面张力的作用长度在哪，一般来说就是在界面的边界上，其实也可以是界面内部的某一段假想的长度，不过一般来说研究界面内部的表面张力意义不大。对于实际情况，表面张力的作用长度一般不会是一条完美的线段，可能会是一段曲线，这样计算表面张力的大小就要对微分形式的表面张力公式$dF=\gamma \cdot dL$进行积分来计算这一段曲线受到的总的表面张力大小。（这里其实更严格来说，$dF$和$dL$都应该是矢量，$d\bm{L}=dL\cdot  \Vec{e}_L$，$\Vec{e}_L$的方向为之前所说的“在界面在该处的切面上，垂直于$L$，趋向于使界面面积缩小”，这样的话积分结果是各个$dF$的矢量和，积分才有意义。）
+
+表面张力系数$\gamma$是单位长度的界面质点受到的力。虽然$\gamma$并不是力，但是用它来研究界面的现象是更有意义的，正如我们研究气体的膨胀收缩时主要研究压强而不研究力。这一点还有待大家在研究过程中自行体会。
+
+\section{接触角}
+一般意义上的液体表面张力都是指的该液体与空气的相界面上的表面张力，但实际上固-液、固-气界面上也都有表面张力。我们分别用$\gamma_{LG}$（可直接记为$\gamma$）、$\gamma_{SL}$、$\gamma_{SG}$来表示液-气、固-液、固-气界面的表面张力系数。虽然固-液、固-气的表面张力系数一般来说比较小，但这并不代表它们不重要。
+
+对于一个平衡的固-液-气三相体系，会存在一个接触角，有两种常见的接触角现象：一是静止在固体表面上的液滴，二是细管壁中的弯曲液面，如下图所示。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{4}
+    \caption{静止在固体表面上的液滴的接触角}
+    \label{fig:my_label}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{5}
+    \caption{细管壁中的弯曲液面的接触角}
+    \label{fig:my_label}
+\end{figure}
+
+不论是静止的液滴还是弯曲液面，只要固液气三相系统的状态确定，那么接触角就是一定的。这里我们以静止液滴为例来分析接触角。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{6}
+    \caption{静止液滴的接触角（$0<\theta<\frac{\pi }{2} $）}
+    \label{fig:my_label}
+\end{figure}
+
+我们确定研究对象为三相交界处的一个液体质点，它受到$\gamma_{LG}$、$\gamma_{SL}$、$\gamma_{SG}$的作用（因为$dL$相同，所以这里直接用表面张力系数进行分析），而且处于静止状态。我们定义接触角$\theta$为、$\gamma_{SL}$和$\gamma_{SG}$之间的夹角（$\gamma_{LG}$的方向就是液面在三相交界点处的切线上指向界面面积趋于缩小的方向）。我们列出水平方向的平衡方程：
+\begin{equation}
+    \gamma_{LG}\cos \theta+\gamma_{SL}=\gamma_{SG}
+\end{equation}
+解得
+\begin{equation}
+    \cos \theta=\frac{\gamma_{SG}-\gamma_{SL}}{\gamma_{LG}} 
+\end{equation}
+这就是接触角的决定式。（其实严格来说，质点还受到一个固体表面施加的向下的吸附力，这样竖直方向才是平衡的。）这里大家注意，接触角不仅是一种物理现象，而是一个固-液-气三相体系的物理性质，只要体系的物质组成、温度等因素确定了，接触角就确定了。
+
+当$\gamma_{SG}>\gamma_{SL}$时，接触角$\theta$为锐角，这种情况被称作“浸润”，比如水对玻璃是浸润的；
+
+当$\gamma_{SG}<\gamma_{SL}$时，接触角$\theta$为钝角，这种情况被称作“不浸润”，比如水银对玻璃是不浸润的。
+
+\section{$\ast$表面张力的成因}
+（这一部分如果大家高中学过热学的话可以跳过，没学过的话还是建议了解一下）
+
+表面张力的本质是分子间作用力。分子间作用力$F$随分子间距$r$的变化如下图实线所示：
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{7}
+    \caption{分子间作用力随分子间距的变化}
+    \label{fig:my_label}
+\end{figure}
+$F>0$时表现为斥力，$F<0$时表现为引力，斥力和引力的临界分子间距为$r_0$。对于一个液-气两相体系，在界面处，由于压力比较小，液体分子之间的间距普遍较大，大于$r_0$，分子间作用力体现为引力，从而产生一种使界面面积收缩的趋势，这就是表面张力的成因。
+下面以水在玻璃管中形成凹液面为例来解释浸润现象：当液相对固相浸润时，固体表面对液体具有一种吸引力。在吸引力的作用下，靠近玻璃的水分子挨得比较紧密，水分子之间的间距普遍较小，小于$r_0$，体现为斥力，在这种排斥作用下玻璃附近的水面升高，从而形成了凹液面。
+
+\hspace*{\fill}
+\begin{example}
+求解毛细提升高度
+\begin{solution}
+我们把一个圆柱形直玻璃管插入水中，如果这个玻璃管的内径足够小的话，我们会观察到玻璃管中的水面明显地升高了，这就是毛细现象。我们定义玻璃管中液面最终的稳定高度为毛细提升高度（或称为“注林高度”）。下面我们用表面张力的相关知识来定量求解毛细提升高度的表达式（已知：玻璃管半径为$R$，接触角为$θ$，水的表面张力为$γ$4，假设$h>>R$）。
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{8.png}
+    \caption{平衡状态下毛细管中的液面}
+    \label{fig:my_label}
+\end{figure}
+
+我们对稳定状态下的玻璃管中的液柱进行受力分析，首先液柱受到大小为$\rho\cdot \pi R^{2} h\cdot gh$，方向向下的重力，此外肯定还受到向上的力与重力平衡，要想找到这个力要对界面进行分析。我们对界面上的某个质点受“力（$N/m$）”分析，如上图所示：一共受到4个“力”：$\gamma_{LG}$、$\gamma_{SL}$、$\gamma_{SG}$和吸附“力”，但是$\gamma_{LG}$其实是液柱的内“力”，外“力”应该是、$\gamma_{SL}$、$\gamma_{SG}$和吸附“力”的合“力”，这个合“力”就是等大反向的$\gamma_{LG}$。$\gamma_{LG}$沿竖直方向的分“力”为$\gamma_{LG}\cos \theta$，$\gamma_{LG}\cos \theta$对整个边界积分得到竖直向上的合力，由于$\gamma_{LG}\cos \theta$处处相同，合力就等于$\gamma_{LG}\cos \theta\cdot 2\pi R$。所以由液柱竖直方向的受力平衡得到等式：
+\begin{equation}
+    \rho\cdot \pi R^{2} h\cdot gh=\gamma_{LG}\cos \theta\cdot 2\pi R
+\end{equation}
+解得
+\begin{equation}
+    h=\frac{2\gamma \cos \theta}{\rho gR}
+\end{equation}
+（$\gamma_{LG}$可以不写角标。）这就是毛细提升高度公式。由这一表达式可见，毛细提升高度与毛细管半径成反比，且与体系性质（液体表面张力$\gamma$、密度$\rho$、三相接触角）有关。
+\end{solution}
+\end{example}
+\section{附加压强}
+如果界面是弯曲的，那么由于表面张力的作用，界面会受到一个指向凹侧的附加压强；或者可以这样理解：界面有减小自身面积的趋势，因此界面有向凹侧收缩的趋势，这个趋势就是附加压强的成因。
+
+附加压强的表达式为杨-拉普拉斯公式：
+\begin{equation}
+    \Delta p=\gamma\cdot \frac{1}R{} 
+\end{equation}
+$\Delta p$为附加压强，$\gamma$为液体表面张力，$\frac{1}R{}$为界面上该点的曲率。二维曲线（也就是二维模型下的界面）的曲率等于该点的曲率半径的倒数，即$\frac{1}R{}$，至于曲率半径的公式大家用到的话就去翻翻高数书；三维情况（界面为曲面）则曲率为$(\frac{1}{R_1 } +\frac{1}{R_2 })$，$R_1$和$R_2$是曲面的两个主曲率半径，三维情况比较复杂，这里就不详细解释了，如果研究过程中用到的话大家自行探究。
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{9}
+    \caption{静止液滴表面上某点的压强分析}
+    \label{fig:my_label}
+\end{figure}
+对于一个静止液滴表面上任意一点，它的内测的压强$p$一定是小于外侧的压强$p_0$的，因为这一点还受到一个指向界面凹侧（即内侧）的附加压强，三个压强满足$p=p_0+\Delta p$。
+
+\section{表面能（也称表面势能）}
+我们在介绍表面张力方向时指出：界面上某一质点受到的表面张力的方向是：在界面在该处的切面上，垂直于$L$，趋向于使界面面积缩小。其实，从某种意义来讲，表面张力本质上就是界面收缩的趋势所导致的。那么界面为什么会有收缩的趋势呢？要想解释这个问题，我们需要从能量的角度来更深入的认识表面张力现象。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{10.png}
+    \caption{克服表面张力做功}
+    \label{fig:my_label}
+\end{figure}
+
+还是这个基本的模型，如果我们把棒缓慢拉动$\Delta x$的距离，我们的拉力会克服表面张力做功，或者说表面张力做了负功，功的大小为$2F\Delta x=2\gamma L\Delta x=2\gamma \Delta A$，其中$\Delta A$为界面面积的增加量。那么拉力所做的功必然转化为了某种能量，而且这种能量的变化量和界面面积的变化量是成正比的，比例系数就是$\gamma$。这种能量就是表面能。
+
+若界面面积增加，则表面张力做负功，表面能增加；若界面面积减小，则表面张力做正功，表面能减小。（表面能和重力势能十分相似，大家可以类比重力势能来理解：若高度减小，则重力做正功，重力势能减小；若高度增加，则重力做负功，重力势能增加。）
+其实，对于所有的“势能”，我们更关心的是它的变化量，而不是它的具体值（比如分析电路时，我们更关心的是某支路或元件两端的电势差，而不是某节点电势的具体值是多少）。
+
+因此，我们不妨就把表面能的值定义为表面张力系数与整个界面面积的乘积：
+\begin{equation}
+    E_表=\gamma \cdot A 
+\end{equation}
+
+这就是表面能的定义式。
+
+现在，我们就可以回答“为什么界面会有收缩的趋势”这一问题了。自然界中，普遍存在一个“能量最低原理”，即系统的状态总会趋于系统总能量最低的状态，表面能也是如此。而表面能想达到最低，根据定义式，界面总面积就要趋于最低。
+
+举个简单的例子，我们在失重环境中释放一坨水，那么这些水最终会形成一个球悬浮在空中。这是因为总体积一定的情况下，球的表面积是最小的，因而“水球”的表面能是最小的。
+
+但是，请大家注意，“能量最低原理”中的“能量”指的是系统的总能量，在失重状况下总能量就是表面能，但在大多数情况下往往还要包括系统的重力势能，还可能有固-液、固-气界面的表面能，要考虑全面。
+
+\hspace*{\fill}
+\begin{example}
+从能量角度求解毛细提升高度。
+\begin{solution}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{11.png}
+    \caption{从能量角度求解毛细提升高度}
+    \label{fig:my_label}
+\end{figure}
+我们选取研究对象为毛细管中水面（0高度）以上以及$H$高度（$H$很大，以至于$h$不会超过$H$）以下部分的水和空气。那么，系统的的总能量包括水的重力势能（忽略空气的重力势能）、水与玻璃之间的固-液表面能、空气与玻璃之间的固-气表面能以及气液界面的气-液表面能。我们的目的是求系统总能量取最小时的液面高度$h$，因此我们要以$h$为自变量来表达总能量。
+由于气液界面与$h$无关，这里我们偷个懒，总能量里面就不算气-液表面能了。
+\begin{equation}
+    E_总=\rho \pi R^2h\cdot g\cdot \frac{h}{2} +\gamma_{SL}\cdot 2\pi Rh+\gamma_{SG}\cdot 2\pi R(H-h)
+\end{equation}
+（第一项是重力势能，为液柱质量乘以$g$再乘以质心高度。）化简得
+\begin{equation}
+    E_总=\frac{1}{2}\rho g\pi R^2h^2  + 2\pi R(\gamma_{SL}-\gamma_{SG})h+2\pi R\gamma_{SG}H
+\end{equation}
+发现$E_总$是一个关于$h$的开口向上的二次函数。因此，当且仅当
+\begin{equation}
+    h=-\frac{2\pi R(\gamma_{SL}-\gamma_{SG})}{2\cdot \frac{1}{2}\rho g\pi R^2} =\frac{2(\gamma_{SG}-\gamma_{SL})}{\rho gR}=\frac{2\gamma \cos \theta}{\rho gR} 
+\end{equation}
+（代入$\cos \theta=\frac{\gamma_{SG}-\gamma_{SL}}{\gamma_{LG}}$）时，$E_总$取得最小值。所以毛细提升高度为$h=\frac{2\gamma \cos \theta}{\rho gR} $，与之前用受力平衡的方法求得的毛细提升高度一致。
+\end{solution}
+\end{example}
+% \chapter{流体运动的描述（待编辑）}
+
+\chapter{流体力学基本方程以及自学之道}
+本章还有待编辑，主要是宋雨潇讲基本方程中的Navier-Stokes方程，还有一些自学流体力学的建议，最后一节安放了王洪伟老师的《我所理解的流体力学》的前四章，流体性质、流体静力学、流体运动学、流体动力学基本方程四个部分。
+\section{宋雨潇讲Navier-Stokes方程}
+纳维-斯托克斯方程（Navier-Stokes方程，简称N-S方程），是粘性流动的动量方程，也是流体力学三大基本方程之一，其本质是动量守恒。它相当于流体力学中的“牛顿第二定律”，正如经典力学中一切质点的运动问题都可以转化为求解牛顿第二定律对应的基本方程（拉格朗日方程、哈密顿方程等），我们要想定量研究流体的运动状况，求解N-S方程是不可避免的。
+
+这里为大家介绍一下N-S方程的一个比较基础但应用较为广泛的形式：对于不可压缩牛顿型流体而言，N-S方程的形式如下：
+\begin{equation}
+	\rho\left[\frac{\partial \boldsymbol{V}}{\partial t}+(\boldsymbol{V} \cdot \boldsymbol{\nabla}) \boldsymbol{V}\right]=\boldsymbol{f}-\boldsymbol{\nabla} p+\mu \boldsymbol{\nabla}^{2} \boldsymbol{V}
+\end{equation}
+其中 $V$ 是速度矢量，$p$ 是压强，它们都是空间和时间的函数, 即 $V=V(x,y,z,t)$，$p=p(x,y,z,t)$ ；由于流体不可压缩，密度 $\rho$ 为常量。对于直角坐标系，可以展开为：
+\begin{equation}
+\begin{aligned}
+	&\rho\left(\frac{\partial u}{\partial t}+u \frac{\partial u}{\partial x}+v \frac{\partial u}{\partial y}+w \frac{\partial u}{\partial z}\right) =f_{x}-\frac{\partial P}{\partial x}+\mu\left(\frac{\partial^{2} u}{\partial x^{2}}+\frac{\partial^{2} u}{\partial y^{2}}+\frac{\partial^{2} u}{\partial z^{2}}\right) \\
+	&\rho\left(\frac{\partial v}{\partial t}+u \frac{\partial v}{\partial x}+v \frac{\partial v}{\partial y}+w \frac{\partial v}{\partial z}\right) =f_{y}-\frac{\partial P}{\partial y}+\mu\left(\frac{\partial^{2} v}{\partial x^{2}}+\frac{\partial^{2} v}{\partial y^{2}}+\frac{\partial^{2} v}{\partial z^{2}}\right) \\
+	&\rho\left(\frac{\partial w}{\partial t}+u \frac{\partial w}{\partial x}+v \frac{\partial w}{\partial y}+w \frac{\partial w}{\partial z}\right) =f_{z}-\frac{\partial p}{\partial z}+\mu\left(\frac{\partial^{2} w}{\partial x^{2}}+\frac{\partial^{2} w}{\partial y^{2}}+\frac{\partial^{2} w}{\partial z^{2}}\right)
+\end{aligned}
+\end{equation}
+其中$u,v,w$分别为$x,y,z$方向的速度场分量，$p$为压力场，$f$为体积力，$\mu$为流体粘度，$\rho$为流体密度。
+
+N-S方程是一个高阶的偏微分方程，它的求解难度是非常大的（百度百科：三维空间中的N-S方程组光滑解的存在性问题被美国克雷数学研究所设定为七个千禧年大奖难题之一）。因此，要想求解从实际问题中得到的N-S方程，一般需要对N-S方程进行一定程度的简化（但这样做无疑有失合理性），或者借助计算机软件进行数值计算求得数值解。
+
+虽然N-S方程的求解十分复杂，但是它的推导是比较容易理解的，其实就是对流场中的任意一个流体微元列写牛顿第二定律。为了方便大家理解，这里先介绍一下N-S方程中各项的物理意义（如果大家有兴趣深入了解N-S方程的推导的话，可以参考最后的“N-S方程推导”这一部分，但是，我更推荐大家尝试自己推导一下，基于大一的高数知识是完全可以完成推导的，这样可以加深大家对流体动力学相关思想的理解）：
+
+等号右边可以看作合外力$F$，左边可以看作$ma$，只不过现在等号两边同时除掉了微元的体积，因此$m$变成了$\rho$，等号右边的各“力”实际上都是单位体积受到的力。
+
+先来看等号右边，$f$为我们研究的流体微元受到的体积力，一般来说就是重力与体积之比，也就是$\rho\bf{g}$，在特殊情况下也有可能是单位体积的电场力、惯性力之类的；$\nabla p$为某一时刻该位置处压力场的散度，可以理解为流体微元受到四面八方的流体微元的压力的合作用力，至于为什么要加个负号，我们以$x$方向为例来解释，我们假设我们探究的流体微元是一个正方体，如果微元附近沿着$x$正方向压强增加，即$\displaystyle\frac{\partial p}{\partial x}>0$，这样的话微元朝向$x$正方向的面受到的的压强大，朝向$x$负方向的面受到的的压强小，这样微元受到$x$方向上的合压强实际上是朝向$x$轴负方向的，因此要加个符号，$y,z$方向同理；最后一项可以理解为流体微元受到四面八方的的流体微元的粘滞力的合作用力，可由牛顿粘性定律得到。
+
+再来看等号左边，$\displaystyle\frac{\partial\mathbf{V}}{\partial t}+(\mathbf{V}\cdot \nabla) \mathbf{V}$一项是流体微元的加速度。这里大家需要重点注意和理解一下，流场中的流体微元的加速度与单个质点的加速度是不同的：流体微元的加速度有两部分，一部分是局部加速度$\displaystyle\frac{\partial\mathbf{V}}{\partial t}$，这与单个质点的加速度一样，但流体微元的加速度还要加上$\mathbf{V}\cdot \nabla \mathbf{V}$，这一部分称作对流加速度。我们以$x$方向为例来解释这个问题：首先我们从数学的角度来求一下加速度的表达式，根据加速度的定义：$a_x=\frac{du}{dt}$（我们设$x,y,z$方向的速度场分量分别为$u,v,w$），这里大家注意，$u$既随时间变化，也随空间变化，即$u=u(t,x,y,z)$，我们使用多元函数全微分的方法，可以求出
+\begin{equation}
+	\begin{aligned}
+	a_x&=\displaystyle\frac{\displaystyle\frac{\partial u}{\partial t}dt+\displaystyle\frac{\partial u}{\partial x}dx+\displaystyle\frac{\partial u}{\partial y}dy+\displaystyle\frac{\partial u}{\partial z}dz}{dt}\\
+	&=\colorbox{yellow}{$\displaystyle\frac{\partial u}{\partial t}$}+\colorbox{green}{$u\displaystyle\frac{\partial u}{\partial x}+v\displaystyle\frac{\partial u}{\partial y}+w\displaystyle\frac{\partial u}{\partial z}$}
+	\end{aligned}
+\end{equation}
+其中黄色部分是局部加速度，绿色部分是对流加速度。同理可以把y、z方向上的加速度也表达出来，然后可以用向量形式写成一个表达式$a=\displaystyle\frac{\partial\mathbf{V}}{\partial t}+(\mathbf{V}\cdot \nabla) \mathbf{V}$。下面我们从物理角度分别分析一下对流加速度和局部加速度的物理意义：对于速度场非均匀分布的定常流场而言，微元的加速度只有对流加速度（这里大家可能会认为定常流场中的流体微元没有加速度，这是不对的），流体微元在下一时刻将会运动到流线（或迹线）的下游一点点的位置，由于流场是不均匀的，流体微元的速度就会改变，因此速度是随时间变化的，也就是说流体微元是有加速度的，而这个加速度是由流场的空间分布决定的，这就是对流加速度；另一种情况是非定常流场，对于流场中的某一固定点而言，各个时刻流经这一点的流体微元的速度都不相同，因此也存在速度随时间的变化，这个加速度是流场随时间变化决定的，这就是局部加速度。对于速度场均匀分布的定常流场而言，这两种加速度都是0，也就是说流场是没有加速度的；对于速度场非均匀分布的定常流场，对流加速度$\ne 0$，局部加速度$=0$；对于非定常流场，对流加速度和局部加速度都$\ne 0$。
+
+N-S方程推导：
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{N-S方程推导示意图.png} 
+	\caption{N-S方程推导示意图}
+	\label{N-S方程推导示意图} 
+\end{figure}
+我们在流场中建立空间直角坐标系，我们确定研究对象为$t$时刻位于$(x,y,z)$处的一个长为$dx$，宽为$dy$，高为$dz$的正方体（也可理解为长方体）流体微元，我们对这个流体微元列写牛顿第二定律方程（以$x$方向为例）：
+等号左边是$ma$，即$\rho dxdydz(\displaystyle\frac{\partial u}{\partial t}dt+\frac{\partial u}{\partial x}dx+\frac{\partial u}{\partial y}dy+\frac{\partial u}{\partial z}dz)$；右边是合外力，包括体积力、压力和粘滞力，体积力可以直接表达为$f_xdxdydz$，压力和粘滞力需要详细推导。
+首先来看压力，压力在$x$方向上的合作用力=（正方体左面的压强-正方体右面的压强）$\times$左面（或右面）的面积，也就是$\left[p\left(x,y,z,t\right)-p\left(x+dx,y,z,t\right)\right]\cdot dydz$。
+再来看粘滞力，根据牛顿粘性定律，粘滞力$=\tau\cdot A=\mu\displaystyle\frac{d u}{d y}\cdot A$，$\tau$为粘滞应力，$\mu$为粘度，$A$为应力作用面积。我们研究的流体微元的六个面都会受到沿$x$方向的粘滞力，这里我们以上下两个面为例来分析：流体微元受到上下两个面的合粘滞力=上下两个面的应力之差$\times$上面（或下面）的面积，即$\left[\tau\left(x,y,z+dz\right)-\tau\left(x,y,z\right)\right]\cdot dxdy=\displaystyle\frac{\partial \tau}{\partial z}dz\cdot dxdy$（如果速度沿z方向增加的话，上面的应力就是正的，下面的应力就是负的，因此接下来代入牛顿粘性定律就不加负号了），代入牛顿粘性定律得$\displaystyle\frac{\partial}{\partial z}\left(\mu\frac{\partial u}{\partial z}\right)\cdot dxdydz=\mu\displaystyle\frac{\partial^{2}u}{\partial z^{2}}\cdot dxdydz$，同理可得前后两面的$x$方向的合粘滞力为$\mu\displaystyle\frac{\partial^2u}{\partial y^2}\cdot dxdydz$，左右两面的合粘滞力为$\mu\displaystyle\frac{\partial^2u}{\partial x^2}\cdot dxdydz$。（这里大家可能疑惑为什么左右两面也会有粘滞力，因为左右两面上按说并没有发生微元之间的剪切作用呀？我查阅了一定的资料，目前得到这样的解释：左右两面其实发生的并不是剪切作用，而是一种由于流体粘性导致的吸引作用。但是吸引作用和剪切作用的物理机制是不同的，它们的$\mu$是否应该不同呢？这一问题我目前没有足够的观点和论据来反驳，这也是我目前来说理解不够透彻的一点，大家就暂且认可这一形式吧，如果大家有兴趣的话可以深入探究一下。）
+那么现在就可以把$x$方向的牛顿第二定律方程的完整形式写出来了：
+
+\begin{equation}
+	\begin{array}{ll}
+\rho dxdydz &\left(\displaystyle\frac{\partial u}{\partial t}dt+\displaystyle\frac{\partial u}{\partial x}dx+\displaystyle\frac{\partial u}{\partial y}dy+\displaystyle\frac{\partial u}{\partial z}dz\right)\\
+&=f_xdxdydz+\left[p\left(x,y,z,t\right)-p\left(x+dx,y,z,t\right)\right]·dydz\\
+&+\mu\displaystyle\frac{\partial^{2}u}{\partial x^2}dxdydz+\mu\displaystyle\frac{\partial^{2}u}{\partial y^2}dxdydz+\mu\displaystyle\frac{\partial^{2}u}{\partial z^2}dxdydz
+	\end{array}
+\end{equation}
+我们将等号两边同时除以$dxdydz$得到：
+\begin{equation}
+	\begin{array}{ll}
+\rho\left(\displaystyle\frac{\partial u}{\partial t}dt+\displaystyle\frac{\partial u}{\partial x}dx+\displaystyle\frac{\partial u}{\partial y}dy+\displaystyle\frac{\partial u}{\partial z}dz\right)&=f_x+\left[p\left(x,y,z,t\right)-p\left(x+dx,y,z,t\right)\right]/dx\\
+&+\mu(\displaystyle\frac{\partial^2u}{\partial z^2}+\displaystyle\frac{\partial^2u}{\partial y^2}+\displaystyle\frac{\partial^2 u}{\partial x^2})
+	\end{array}
+\end{equation}
+再把压力项化简一下，就得到了$x$方向上的N-S方程：
+\begin{equation}
+\rho\displaystyle\left(\frac{\partial u}{\partial t}dt+\frac{\partial u}{\partial x}dx+\frac{\partial u}{\partial y}dy+\frac{\partial u}{\partial z}dz\right)=f_x-\frac{\partial p}{\partial x}+\mu(\frac{\partial^2u}{\partial z^2}+\frac{\partial^2u}{\partial y^2}+\frac{\partial^2u}{\partial x^2})
+\end{equation}
+同理可以写出$y,z$方向上的N-S方程。
+
+
+\section{师傅领进门，修行在个人}
+流体力学博大精深，本讲义没必要也不可能把所有知识囊括进来，但求抛砖引玉。但是流体力学教材众多且良莠不齐，笔者实在不忍心让读者自己摸索，在此给一点指引，也是经验教训！
+
+\subsection{流体力学教材与网课推荐}
+流体力学教材良莠不齐，这里有必要给读者避避雷。如果你上知乎去看，推荐的流体力学教材都是国外的英文书。国内工科学校确实很多也用英文书当教材，偏航空的爱用Anderson的《Fundamentals of Aerodynamics》，只有英文版本，我啃了一百多页英文书才做出去年的17题竹蜻蜓。指望读者读英文书是不现实的，因此还有一个不错的备选入门方案。还可以读王洪伟老师写的《我所理解的流体力学》（\cref{我所理解的流体力学-第2版}），特别是流体力学基本方程及其推导\footnote{对比别的书，你会发现这书太友好了，因为别的书里同样的推导能把你看吐了。}，读者可能乍一听书名觉得像科普书。不，这绝对不是科普书，而是一本没有习题的教材，特点是推导很容易看懂，语言幽默易懂。哔哩哔哩有配套视频：\href{https://www.bilibili.com/video/BV1pW411X7xE?share_source=copy_web}{《流体力学基础》王洪伟老师}。类似的网课还有：\href{https://www.bilibili.com/video/BV1ts411t75w?share_source=copy_web}{《工程流体力学》主讲：华中科技大学 赵汉中 教授}
+
+历届CUPT老队员的经验表明看网课做出赛题来是不可能的事情，但为什么我还推荐网课呢？因为想不看网课自学流体力学。对待网课，我个人的态度是，研究中需要哪一部分就看哪一部分，不必从头看起，经验告诉我这样做容易放弃。毕竟我们要以本科课程为主，竞赛为辅，流体力学网课挑着看（自己需要的部分）即可。
+
+
+\subsection{我所理解的流体力学-第2版}\label{我所理解的流体力学-第2版}
+文件太大，这里只上传了目录及前四章内容，你可以先读读看。整本书已经上传到了群里，路径：群文件——可参考的书、讲义、文献——我所理解的流体力学.zip
+\includepdf[pages={10-124}]{我所理解的流体力学-第2版-前.pdf} 
+
+% \chapter{无粘流动和势流方法（待编辑）}
+
+% \chapter{粘性剪切流动（待编辑）}
+
+\chapter{空气动力学基础}
+\section{叶凯帆译注Anderson《空气动力学基础》英文原书部分内容}
+这一节的翻译工作是我之前研读Anderson《空气动力学基础》英文原书时所做的，里头夹带很多感悟，把一些原书没写明白的推导写清楚了，回过头来看，还是收获良多，想了想还是摘录于此。
+\subsection{空气动力学历史与研究概述}
+历史上，由于海上战争要求船的操纵性和速度的提高。为了提高船速，重要的是尽可能减小船体周围的水流的阻力。突然，船体驱动力成为一个引起人们极大兴趣的工程问题，从而推动了流体力学的研究。这一推动力在一个世纪后迅速发展起来，1687年，艾萨克·牛顿（Isaac Newton 1642-1727）出版了他著名的《自然哲学的数学原理》， 在其中，第二本书的全部内容都是关于流体力学的。 牛顿遇到了与他之前的其他人相同的困难，即，从概念上讲，流体流动比固体动力学困难。 固体通常在几何上定义良好，因此其运动相对容易描述。 另一方面，流体是一种“糊状”的物质，在牛顿时代，即使是如何定性地模拟其运动也很难决定，更不用说获得定量关系了。 牛顿认为流体流动是均匀的直线型颗粒流，非常像散弹枪发射的一团团颗粒。
+\begin{figure}[H] 
+	\centering
+	\includegraphics[width=0.9\textwidth]{竹蜻蜓空气动力学016} 
+	\label{Figure016} 
+\end{figure}
+如上图所示，牛顿假设撞击到与水流成$\theta$度角的表面时，粒子会将其法向动量传递到表面，但会保留切向动量。 因此，在与表面碰撞之后，颗粒将随后沿着表面移动。 这导致表面上的流体动力以$sin^{2}\theta$的形式表达。这是牛顿著名的正弦平方定律（在第十四章中有详细描述）。尽管其精度尚不理想，但其简单性却导致了广泛的应用。 后来，在1777年，让·勒朗·达朗贝尔（Jean Lerond d'Alembert）（17I7-1783）在法国政府的支持下进行了一系列实验，目的是测量船只在运河中的抵抗力。
+
+“对于倾斜平面，阻力随入射角的$sin^{2}\theta$变化的规则仅在$50^{\circ}$到$90^{\circ}$之间适用，而对于较小的角度则必须放弃。”无独有偶，在1781年，莱昂哈德·欧拉（Leonhard Euler，1707-1783）指出了牛顿模型的不自然（图1.7）。牛顿模型认为直线的粒子流毫无征兆地撞击在表面上，相反，欧拉认为，流体向物体运动，“在到达物体之前已经改变了其运动方向及速度。在到达物体时是沿物面流过物体的。除了与单个接触点相对应的压力外，对身体不施加其他任何作用力。”
+
+欧拉接着提出了一个阻力公式，该公式试图考虑沿表面的剪切应力分布以及压力分布。 对于大入射角，此表达式与$sin^{2}\theta$成正比，而在小入射角时，此表达式与$sin\theta$成正比。 欧拉指出，这与d'Alembert进行的船体实验合理吻合。流体动力学的早期工作现已被现代概念和技术所取代。但是，令人惊讶的是，牛顿的正弦平方定律已经在超高速空气动力学中得到了新的应用。
+
+学习空气动力学的第一步：搞清楚固体，液体和气体之间的区别。可以通过如下简单的方式思考，将固体放入更大的密闭容器中，固体的形状和边界将保持不变。现在将液体放入容器中，液体将改变其形状以符合容器的形状，并且在达到液体最大深度之前将处于与容器相同的边界。 现在将气体放入容器中。 气体将完全充满容器，并具有与容器相同的边界。
+\begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+	\centering %图片居中
+	\includegraphics[width=1.1\textwidth]{竹蜻蜓空气动力学011} %插入图片，[]中设置图片大小，{}中是图片文件名
+%	\caption{} %最终文档中希望显示的图片标题
+	\label{Figure011} %用于文内引用的标签
+\end{figure}
+更深入地从分子层面讨论其本质区别地内容书里也有。
+
+Fluid这个词可用来指液体或气体。在表面受切向力作用时，固体会发生有限的变形。且单位面积所受的切力ーー剪应力，通常与变形量成正比。对应地，当切向剪应力作用于流体表面时流体会发生持续增加的变形，且剪应力通常与变形速率成正比。
+
+注意区分气体动力学与空气动力学，因为different species of gases (say, N2, He, etc.)have different properties. Therefore, fluid dynamics is subdivided into three areas as follows:
+\begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+	\centering %图片居中
+	\includegraphics[width=0.4\textwidth]{竹蜻蜓空气动力学012} %插入图片，[]中设置图片大小，{}中是图片文件名
+	\label{Figure012} %用于文内引用的标签
+\end{figure}
+读安德森这本书之前，我一直错误地认为，空气动力学和气体动力学没区别，我甚至借了本《气体动力学基础Fundamentals of Gasdynamics》准备拿来研究空气动力学！大家引以为戒！
+
+Aerodynamics is an applied science with many practical applications in engineering. No matter how elegant an aerodynamic theory may be, or how mathematically complex a numerical solution may be, or how sophisticated an aerodynamic experiment may be, all such efforts are usually aimed at one or more of the following practical objectives:
+\begin{figure}[H] 
+	\centering 
+	\includegraphics[width=1.0\textwidth]{竹蜻蜓空气动力学013} 
+	\label{Figure013} 
+\end{figure}
+1.预测通过流体（通常是空气）移动的物体上的力和力矩以及热量的传递。 例如，我们关心的是机翼，机翼，机身发动机舱，以及最重要的是整个飞机配置的升力，阻力和力矩的产生。 我们要估算建筑物，轮船和其他地面车辆上的风力。 我们关心水面舰艇潜艇和鱼雷上的流体动力。 我们需要能够计算飞行器的空气动力加热，从超音速运输到进入木星大气的行星探测器。 这些只是几个例子。
+\begin{figure}[H] 
+	\centering 
+	\includegraphics[width=1.0\textwidth]{竹蜻蜓空气动力学014} 
+	\label{Figure014} 
+\end{figure}
+第1项中的应用属于外部空气动力学，因为它们处理的是物体上的外部流动。相比之下，第2项中的应用涉及内部空气动力学，因为它们处理管道内部的流动。在外部空气动力学中，除了与物体相关的力，力矩和空气动力学加热外，我们经常对远离物体的空气流场的细节感兴趣。例如，航天飞机在其\textcolor{red}{重新进入轨迹reentry trajectory}的一部分期间经历的通信中断是由于自由电子在飞机周围的热激层中的集中所致。我们需要计算整个流场中电子密度的变化。另一个例子是冲击波在超音速流中的传播。例如，超音速飞机机翼产生的冲击波会撞击并干扰尾翼表面吗？另一个例子是与强旋涡相关的流动，这些强旋涡从大型亚音速飞机（如波音747）的机翼末端向下游延伸。这些旋涡的特性是什么，它们如何影响碰巧飞过它们的小型飞机？
+
+以上只是空气动力学的多种应用举例。本书（指Anderson原书）的目的之一是为读者提供必要的技术背景，以充分了解此类实际空气动力学应用的性质。
+\subsection{空气动力学的部分基本概念}
+\subsubsection{流速}
+空气动力学的主要焦点是运动中的流体。因此，流速是极其重要的考虑因素。流体速度的概念比运动中的固体的速度更微妙。考虑一个平移运动中的固体物体，例如，以$30m/s$的速度运动,那么固体的所有部分都同时以相同的$30m/s$速度平移。相反，流体是“糊状”物质，并且对于运动中的流体，流体的一部分可以与另一部分不同的速度行进。因此，我们必须采取以下观点。如下图所示，考虑空气在翼型上的流动。将眼睛锁定在气体中某个极其微小的质量微元上，并观察该微元随时间变化。当它在气体中从一个点移动到另一个点时，其速度和方向都可能发生变化。现在将您的眼睛固定在空间中的特定固定点上，例如，下图中的$B$点。现在可以把流动速度定义为：在空间任意点$B$,气体的流动速度是指当一个非常小流体微元通过$B$点时的速度。因此，流速是一个矢量。这与流体微元扫过$B$点时的压强、密度、温度等标量不一样。流速V具有大小和方向。
+\begin{figure}[H] 
+	\centering
+	\includegraphics[width=0.7\textwidth]{竹蜻蜓空气动力学020} 
+	\label{Figure020} 
+\end{figure}
+需要强调的是，压强、密度、温度和流速都是point properties，具有点属性，即针对一点来讨论的！
+\subsubsection{流线}
+再回到Figure 1.13，运动的流体微元描绘出空间中的一条固定的路径。只要流动是定常的（即流动不随时间变化），这条流动路径便被称为流线。绘制流场的流线是可视化气体运动的重要方法。 我们将经常勾勒出各种物体的流线。 在第2章中，将对流线进行了更为严格的讨论。
+\subsubsection{剪应力}
+最后，我们注意到摩擦可以在流动内部发挥很大作用。考虑Figure 1.14所示的两条相邻的流线$a$和$b$，间距极小设为$dy$。在流线$b$上的点1处，流速为$V$；在流线$a$上的点2处，流速稍高为$V + dV$。可以想象，流线$a$与流线$b$之间会发生摩擦，并且通过摩擦，流线$a$施加了一个大小为$dF_{f}$、方向向右的切向力在流线$b$上。更进一步，我们假想这个力作用在这样一个面积微元$dA$上：它垂直于$y$轴，且是点1处的切平面。于是1点的剪应力$\tau$为
+\begin{equation}
+	\tau=lim\left(\dfrac{dF_{f}}{dA}\right)\qquad dA\rightarrow 0
+\end{equation}
+\begin{figure}[H] 
+	\centering
+	\includegraphics[width=0.7\textwidth]{竹蜻蜓空气动力学021} 
+	\label{Figure021} 
+\end{figure}
+剪切应力$\tau$是每单位面积摩擦力大小的极限形式。作用面垂直于y轴，并且面积在点1处缩小到几乎为零。剪切应力作用在流线的切线方向。 对于空气动力学应用中所关注的气体和液体类型，流线上某一点的切应力值与该点垂直于流线的速度梯度（空间变化率）成正比（如图所示Figure1.14，$\tau\propto\frac{dV}{dy}$）。
+比例常数定义为粘性系数$\mu$。因此有
+\begin{equation}
+	\tau=\mu\cdot\frac{dV}{dy}
+\end{equation}
+$\frac{dV}{dy}$是速度梯度。实际上，$\mu$并不是一个常数。它是流体自身温度的函数。我们将在第1.11节中更详细地讨论这些问题。从上面的方程式，我们可以得出结论：在速度梯度较小的流动区域中，$\tau$较小，流体中局部摩擦效应较小。另一方面，在速度梯度较大的区域中，$\tau$较大，流动中局部摩擦效应也会很大。
+
+
+
+
+\subsection{推导二维翼型气动力与力矩及系数}\label{推导二维翼型气动力与力矩及系数}
+乍一看，在巨大的波音747上产生空气动力似乎很复杂，特别是考虑到机翼，机身，发动机机舱，机尾等上方复杂的三维流动区域。类似地， 在高速公路上以88km/h的速度行驶的汽车涉及身体，空气和地面的复杂相互作用。然而根据空气动力学，在任何情况下，施加在运动物体上的气动力和力矩只有两个基本来源：
+
+1.物体表面的压力分布。
+
+2.物体表面的剪应力分布。
+
+无论物体形状有多复杂，物体受到的气动力和力矩也都完全遵循上述两个基本来源。自然界中，流体只通过作用在物体表面的压力分布和剪应力分布对在其中运动的物体产生作用力。压力$\vec{p}$和剪切力$\vec{\tau}$的量纲都是力每单位面积。$\vec{p}$垂直作用于物面，而$\vec{\tau}$以相切方向作用于物面。剪切应力是由物体表面与空气之间的摩擦力带来的的拖曳作用引起的。（本书在第15至20章中进行了详细研究）。
+\begin{figure}[H]
+	\centering
+	\subfigure{
+		\includegraphics[width=0.47\textwidth]{竹蜻蜓空气动力学023} 
+	}
+	\subfigure{
+		\includegraphics[width=0.47\textwidth]{竹蜻蜓空气动力学024}
+	}
+	\label{Figure023&024}
+\end{figure}
+如Figure1.16所示，如果将$\vec{p}$分布和$\vec{\tau}$分布在整个物体表面上做积分，其总效应分别是在物体上产生的气动力$\vec{R}$和力矩$\vec{M}$。 依次可以将所得的$\vec{R}$矢量分解，两组分解如Figure1.17所示。 在Figure1.17中，$\vec{V}_{\infty }$是相对气流(relative wind)，定义为物体前方远处的气流流速。 远离物体的气流流动称为自由流，因此$\vec{V}_{\infty }$也称为自由流速度(freestream velocity)。
+
+根据定义，在Figure1.17中，
+\begin{align*}
+	\vec{L}&\equiv lift\equiv component\ of\ \vec{R}\ perpendicular\ to\ \vec{V}_{\infty }\\
+	\vec{D}&\equiv Drag\equiv component\ of\ \vec{R}\ parallel\ to\ \vec{V}_{\infty }
+\end{align*}
+注意升力L是垂直于来流的。弦长$c$是从物体的前缘到后缘的直线距离。有时，$\vec{R}$分为垂直于弦和平行于弦的分量如Figure1.17所示。 根据定义，
+\begin{align*}
+	\vec{N}&\equiv normal force\equiv component\ of\ \vec{R}\ perpendicular\ to\ c\\
+	\vec{A}&\equiv axial force\equiv component\ of\ \vec{R}\ parallel\ to\ c
+\end{align*}
+迎角(angle of attack)$\alpha$定义为$c$和$\vec{V}_{\infty }$之间的夹角。因此，$\alpha$也是$\vec{L}$与$\vec{N}$之间以及$\vec{D}$与$\vec{A}$之间的夹角。从Figure1.17可以看出，这两组分解之间的几何关系为：
+\begin{align}
+	L&\equiv N\cos{\alpha}-A\sin{\alpha}\label{L由N与A表达}\\
+	D&\equiv N\sin{\alpha}+A\cos{\alpha}\label{D由N与A表达}
+\end{align}
+\begin{figure}[H] 
+	\centering
+	\includegraphics[width=1.0\textwidth]{竹蜻蜓空气动力学025} 
+	\label{Figure025} 
+\end{figure}
+让我们更详细地考察压力和剪切应力分布的积分从而得到气动力和力矩。考虑Figure1.18中绘制的二维物体。弦线是水平绘制的，因此相对来流$\vec{V}_{\infty }$与水平线夹角为$\alpha$指向斜右上方。笛卡尔坐标系xy轴分别与弦线平行和垂直。从物体表面最前缘到上表面上任意点$A$测得的距离为$s_{u}$；类似地，到下表面上的任意点B的距离是$s_{l}$。上表面的压力和剪应力用$p_{u}$和$\tau_{u}$表示，$p_{u}$和$\tau_{u}$都是$s_{u}$的函数。类似地，下表面的对应物理量和函数下标用$l$。在给定的点，压力垂直于表面，并且相对于竖直方向成一定角度$\theta$； 切应力与表面相切，并且相对于水平方向成相同角度$\theta$。在Figure1.18中，$\theta$顺时针为正，也就是说从竖直（虚）线顺时针到$p$方向和从水平（虚）线顺时针到$\tau$方向为正。在Figure1.18中，所有$\theta$均以正方向显示。
+\begin{figure}[H] 
+	\centering
+	\includegraphics[width=1.0\textwidth]{竹蜻蜓空气动力学027} 
+	\label{Figure027} 
+\end{figure}
+现在，将Figure1.18中的二维形状视为具有均匀截面的无限长柱体的横截面。单位展长的这种柱体如Figure1.19所示。考虑该柱体的面积微元dS，其中$dS = d s\times 1$，如Figure1.19中的阴影区域所示。我们对面积微元dS上的压力和剪切应力带来的局部总法向力$N^{\prime}$和局部总轴向力$A^{\prime}$的感兴趣。$N^{\prime}$和$A^{\prime}$上的一撇表示这是单位展长上的气动力。基于Figure1.18和1.19，我们知道作用在物体上表面的面积微元dS上的法向力微元和轴向力微元为：
+\begin{align}
+	dN^{\prime}_{u}&=-p_{u}ds_{u}\cos{\theta}-\tau_{u}ds_{u}\sin{\theta}\label{单位展长面积微元受力1}\\
+	dA^{\prime}_{u}&=-p_{u}ds_{u}\sin{\theta}+\tau_{u}ds_{u}\cos{\theta}
+\end{align}
+在物体下表面，我们有：
+\begin{align}
+	dN^{\prime}_{l}&=p_{l}ds_{l}\cos{\theta}-\tau_{l}ds_{l}\sin{\theta}\\
+	dA^{\prime}_{l}&=p_{l}ds_{l}\sin{\theta}+\tau_{l}ds_{l}\cos{\theta}\label{单位展长面积微元受力2}
+\end{align}
+读者可自行验证：一旦定义了统一的符号法则，那么$\eqref{单位展长面积微元受力1}$到$\eqref{单位展长面积微元受力2}$这四个式子就是具有一般性的式子。
+
+从前缘（Leading Edge）到后缘（Trailing Edge）积分可以得到单位翼展上的总法向力和总轴向力：
+\begin{align}
+	N^{\prime}&=\int_{LE}^{TE}dN^{\prime}_{u}+\int_{LE}^{TE}dN^{\prime}_{l}\notag\\
+	&=-\int_{LE}^{TE}(p_{u}\cos{\theta}+\tau_{u}\sin{\theta})ds_{u}+\int_{LE}^{TE}(p_{l}\cos{\theta}-\tau_{l}\sin{\theta})ds_{l}\label{单位展长法向力}\\
+	A^{\prime}&=\int_{LE}^{TE}dA^{\prime}_{u}+\int_{LE}^{TE}dA^{\prime}_{l}\notag\\
+	&=\int_{LE}^{TE}(-p_{u}\sin{\theta}+\tau_{u}\cos{\theta})ds_{u}+\int_{LE}^{TE}(p_{l}\sin{\theta}+\tau_{l}\cos{\theta})ds_{l}\label{单位展长轴向力}
+\end{align}
+依次代入\eqref{L由N与A表达}和\eqref{D由N与A表达}可以得到总升力和总阻力。注意到\eqref{L由N与A表达}和\eqref{D由N与A表达}不仅适用于单位展长物体上的力（带撇），也适用于任意形状物体上的力。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{竹蜻蜓空气动力学026} 
+	\label{Figure026} 
+\end{figure}
+施加在车身上的空气动力学力矩（The aerodynamic moment）取决于所选取的力矩作用点。先来考虑作用点选取在前缘点的情况，如Figure1.20所示，我们约定\colorbox{yellow}{\color{black}符号法则：使得$\alpha$增加的方向为正，使得$\alpha$减小的方向为负}。我们再次回到Figure1.18和1.19，以前缘点为参考点，由于压力$\vec{p}$和剪切力$\vec{\tau}$的共同作用，对于单位展长柱体的上表面来说，施加在面积微元dS的力矩为:
+\begin{align}
+	dM^{\prime}_{u}=(p_{u}\cos{\theta}+\tau_{u}\sin{\theta})xds_{u}+(-p_{u}\sin{\theta}+\tau_{u}\cos{\theta})yds_{u}\\
+	\intertext{对于单位展长柱体的下表面来说:}
+	dM^{\prime}_{l}=(-p_{l}\cos{\theta}+\tau_{l}\sin{\theta})xds_{l}+(p_{l}\sin{\theta}+\tau_{l}\cos{\theta})yds_{l}
+\end{align}
+注意这里$\theta$用到的符号法则和前面一样。从前缘（Leading Edge）到后缘（Trailing Edge）积分可以得到绕前缘点的单位展长柱体所受到的局部总角动量（带撇）：
+\begin{align}
+	M^{\prime}_{LE}&=\int_{LE}^{TE}dM^{\prime}_{u}+\int_{LE}^{TE}dM^{\prime}_{l}\notag\\
+	&=\int_{LE}^{TE}[(p_{u}\cos{\theta}+\tau_{u}\sin{\theta})x+(-p_{u}\sin{\theta}+\tau_{u}\cos{\theta})y]ds_{u}\notag\\
+	&+\int_{LE}^{TE}[(-p_{l}\cos{\theta}+\tau_{l}\sin{\theta})x+(p_{l}\sin{\theta}+\tau_{l}\cos{\theta})y]ds_{l}\label{单位展长总力矩}
+\end{align}
+对于给定物体的形状，$\theta$、x和y是关于s的已知函数。因此，如果又知道$p_{u}$，$p_{l}$，$\tau_{u}$和$\tau_{l}$这些物理量关于s的函数（可以来自理论或者实验），那么就可以算出以上这些方程式中的积分。很显然，\eqref{单位展长法向力}、\eqref{单位展长轴向力}和\eqref{单位展长总力矩}证实了之前的原理，也就是说，空气对一个物体产生的升力、阻力以及力矩源于作用在整个物体上的压力分布和剪应力分布。理论空气动力学的主要目标是针对给定的身体形状和自由来流条件计算$p(s)$和$\tau(s)$，从而通过方程式\eqref{单位展长法向力}、\eqref{单位展长轴向力}和\eqref{单位展长总力矩}得到空气动力和力矩。随着我们对空气动力学的讨论不断深入，会发现显然存在着比气动力和力矩本身更为根本的量——力和力矩的无量纲系数，定义如下：
+
+令$\rho_{\infty}$和$V_{\infty}$分别为物体前方远处来流的密度和流速，定义一个有量纲量——自由来流的动压，公式如下：
+\begin{align}\label{动压的定义}
+	\text{Dynamic pressure:}\quad q_{\infty}\equiv \frac{1}{2}\rho_{\infty}{V_{\infty}}^{2}
+\end{align}
+动压具有压力单位（即：牛顿/平方米或英磅/平方英尺），对于动压原书没有过多的解释，我联想到的是伯努利方程$P=P_{0}+\frac{1}{2}\rho V^{2}$，总压=静压+动压。另外，设$S$为特征面积(reference area)，$l$为特征长度(reference length)。 无量纲的气动力系数和力矩系数定义如下：
+\begin{align}
+	\text{Lift coefficient:}\quad C_{L}&\equiv \frac{L}{q_{\infty}S}\\
+    \text{Drag coefficient:}\quad C_{D}&\equiv \frac{D}{q_{\infty}S}\\
+    \text{Normal force coefficient:}\quad C_{N}&\equiv \frac{N}{q_{\infty}S}\\
+    \text{Axial force coefficient:}\quad C_{A}&\equiv \frac{A}{q_{\infty}S}\\
+    \text{Moment coefficient:}\quad C_{M}&\equiv \frac{M}{q_{\infty}Sl}
+\end{align}
+在上述系数中，特征面积$S$和特征长度$l$的选定与给定物体的几何形状有关。不同的形状，$S$和$l$可能是不同的东西。例如，对于飞机机翼，$S$是平面形状面积，$l$是平均弦长，如Figure1.21所示。但是，对于球体，$S$是横截面积，$l$是直径，如Figure1.21所示。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{竹蜻蜓空气动力学028} 
+	\label{Figure028} 
+\end{figure}
+特征面积和长度的具体选择并不严格；不过，在使用气动力和力矩系数数据时，你必须始终明确特定数据是基于哪些参考量。上面列出的带大写字母下标的符号（即$C_{L}, C_{D}, C_{M}\text{和}和C_{A}$）表示完整的三维物体（例如飞机或有限机翼）的气动力和力矩系数。而对于如Figure1.18和Figure1.19所示的二维物体，往往指的是每单位翼展的气动力和力矩，习惯用小写字母表示气动力系数，例如：
+\begin{align}
+	c_{l}\equiv \frac{L^{\prime}}{q_{\infty}c}
+	\qquad c_{d}\equiv \frac{D^{\prime}}{q_{\infty}c}
+	\qquad c_{m}\equiv \frac{M^{\prime}}{q_{\infty}{c}^{2}}
+\end{align}
+其中特征面积$S=c\times 1=c$
+
+另外两个马上要用到的无量纲量是：
+
+\vspace{0.3cm}
+\begin{tabular}{ll}
+	Pressure coefficient: &$\displaystyle C_{p}\equiv \frac{p-p_{\infty}}{q_{\infty}}$\\
+	Skin friction coefficient: &$\displaystyle c_{f}\equiv \frac{\tau}{q_{\infty}}$
+\end{tabular}
+
+其中$p_{\infty}$是自由来流气压(freestream pressure)
+
+\eqref{单位展长法向力}、\eqref{单位展长轴向力}和\eqref{单位展长总力矩}这三个公式最有用的形式是用上面引入的无量纲系数表达的。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{竹蜻蜓空气动力学029} 
+	\label{Figure029} 
+\end{figure}
+根据Figure1.22所示的几何形状，有：
+\begin{align}
+	dx=ds\cdot \cos{\theta}\label{几何关系之cos}\\
+	dy=-(ds\cdot \sin{\theta})\label{几何关系之sin}\\
+	S=c\times 1\label{几何关系之特征面积}
+\end{align}
+注意：\eqref{几何关系之cos}和\eqref{几何关系之sin}中的$ds$具有一般性，也就是可以表示$d s_{u}$也可以表示$d s_{l}$。
+
+把\eqref{几何关系之cos}和\eqref{几何关系之sin}代进\eqref{单位展长法向力}、\eqref{单位展长轴向力}和\eqref{单位展长总力矩}，等式两边同时除以$q_{\infty}$和\eqref{几何关系之特征面积}中的$S$，最后再用$C_{p}$、$c_{f}$、$c_{n}$、$c_{a}$、$c_{m_{LE}}$的定义式一代换，就能得到下面的式子，注意其中$c_{m_{LE}}$中的$LE$表示以前缘点为参考点考虑其力矩$M^{\prime}$
+\begin{align}
+	c_{n}&=\frac{1}{c}\left[\int_{0}^{c}\left(C_{p, l}-C_{p, u}\right) d x+\int_{0}^{c}\left(c_{f, u} \frac{d y_{u}}{d x}+c_{f, l} \frac{d y_{l}}{d x}\right) d x\right]\label{c_{n}的积分形式}\\
+	c_{a}&=\frac{1}{c}\left[\int_{0}^{c}\left(C_{p, u} \frac{d y_{u}}{d x}-C_{p, l} \frac{d y_{l}}{d x}\right) d x+\int_{0}^{c}\left(c_{f, u}+c_{f, l}\right) d x\right]\label{c_{a}的积分形式}\\
+	c_{m_{LE}}&=\frac{1}{c^{2}}\left[\int_{0}^{c}\left(C_{p, u}-C_{p, u}\right) xdx-\int_{0}^{c}\left(c_{f, u} \frac{d y_{u}}{d x}+c_{f, l} \frac{d y_{l}}{d x}\right) xd x\right.\notag\\
+	&\left.+\int_{0}^{c}\left(C_{p, u} \frac{d y_{u}}{d x}+C_{f, u}\right)y_{u} d x+\int_{0}^{c}\left(-c_{p, l}+c_{f, l}\right)y_{l}dx\right]\label{c_{m_{LE}}的积分形式}
+\end{align}
+下面我以\eqref{c_{n}的积分形式}为例，推导一下$c_{n}$：
+\begin{align*}
+	N^{\prime}&=\int_{LE}^{TE}dN^{\prime}_{u}+\int_{LE}^{TE}dN^{\prime}_{l}\\
+	&=-\int_{LE}^{TE}(p_{u}\cos{\theta}+\tau_{u}\sin{\theta})ds_{u}+\int_{LE}^{TE}(p_{l}\cos{\theta}-\tau_{l}\sin{\theta})ds_{l}\\
+	\frac{N^{\prime}}{q_{\infty}c}&=\frac{1}{c}\int_{0}^{c}\left(-\frac{p_{u}-p_{\infty}}{q_{\infty}}\cdot d x+\frac{\tau_{u}}{q_{\infty}}\cdot dy_{u}+\frac{p_{l}-p_{\infty}}{q_{\infty}}\cdot d x+\frac{\tau_{l}}{q_{\infty}}\cdot dy_{l}\right)\\
+	\frac{N^{\prime}}{q_{\infty}c}&=c_{n}=\frac{1}{c}\int_{0}^{c}\left(-C_{p,u}\cdot d x+c_{f,u}\cdot dy_{u}+C_{p,l}\cdot d x+c_{f,l}\cdot dy_{l}\right)\\
+	c_{n}&=\frac{1}{c}\left[\int_{0}^{c}\left(C_{p, l}-C_{p, u}\right) d x+\int_{0}^{c}\left(c_{f, u} \frac{d y_{u}}{d x}+c_{f, l} \frac{d y_{l}}{d x}\right) d x\right]
+\end{align*}
+其余式子同理可推出，请读者自行验证。在实际计算这些积分时，请注意$y_{u}$指向x轴上方，数值为正，而$y_{u}$指向x轴下方，数值为负。 同样，上下表面的$\frac{dy}{dx}$都遵循微积分的通常规则（即对应着斜率的正负）。将等式\eqref{L由N与A表达}和\eqref{D由N与A表达}以系数形式表达，等式两边同时除以$q_{\infty}$和\eqref{几何关系之特征面积}中的$S$，升力和阻力系数就能导出：
+\begin{align}
+	c_{l}&= c_{n}\cos{\alpha}-c_{a}\sin{\alpha}\label{L系数由N系数与A系数表达1}\\
+	c_{d}&= c_{n}\sin{\alpha}+c_{a}\cos{\alpha}\label{L系数由N系数与A系数表达2}
+\end{align}
+想要得到$c_{l}$和$c_{d}$的积分形式，把\eqref{c_{n}的积分形式}和\eqref{c_{a}的积分形式}代入\eqref{L系数由N系数与A系数表达1}和\eqref{L系数由N系数与A系数表达2}即可。
+
+非常重要的一点需要提醒的是，从等式\eqref{c_{n}的积分形式}到\eqref{L系数由N系数与A系数表达2}我们明显看到，气动力和力矩系数可以通过对物体上的压力系数和表面摩擦系数进行积分来获得。 这是理论和实验空气动力学的通用程序。 此外，尽管我们的推导使用了二维物体，但可以为三维物体提供类似的发展方式，几何和方程式只会变得更加复杂，但原理是相同的。
+
+\subsection{翼型的压力中心}
+问题：如果作用在物体上的空气动力用一个总的合力$R$或者它的分量如$N$和$A$来表示，那么这个力将作用在物体的哪个位置？
+
+从\eqref{单位展长法向力}和\eqref{单位展长轴向力}可以看到，法向力和轴向力是由压力和剪应力分布所施加的分布式载荷导致的(分布式载荷可以理解为物体表面各点的受力情况)，而且绕翼型前缘点还会有一个力矩产生，见\eqref{单位展长总力矩}。所以上述问题的答案是，合力的作用点应位于物体上，从而产生与分布式载荷完全相同的效果。 例如，方程\eqref{单位展长总力矩}表明二维机翼上的分布式载荷会产生绕翼型前缘点的力矩。因此，等效作用点必须在这样的位置——将$R$放在机翼上，以在前缘产生完全相同的力矩。 如果将$\vec{A}^{\prime}$放置在如Figure1.25所示的弦线上，则$\vec{N}^{\prime}$的作用点必然位于前缘点后方距离$x_{cp}$处:
+\begin{align}
+	M^{\prime}_{LE}=-(x_{cp})N^{\prime}\notag\\
+	x_{cp}=-\frac{M^{\prime}_{LE}}{N^{\prime}}\label{含N压力中心表达式}
+\end{align}
+在Figure1.25中，以正方向画了表示$M^{\prime}_{LE}$的弯曲箭头。(回想一下前面的符号约定，空气动力学力矩如果有增加迎角的倾向则为正方向)。我们看到图中正的$\vec{N}^{\prime}$会产生负的力矩。这与式\eqref{含N压力中心表达式}中的负号相一致。 因此，在Figure1.25中实际绕前缘点的力矩为负，其方向与所画的箭头方向相反。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{竹蜻蜓空气动力学030} 
+	\label{Figure030} 
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{竹蜻蜓空气动力学031} 
+	\label{Figure031} 
+\end{figure}
+Figure1.25和式\eqref{含N压力中心表达式}中的$x_{cp}$被我们定义为压力中心，即分布式载荷的等效合力作用于物体的位置。如果我们以压力中心为转轴来考虑物体所受力矩，则分布式载荷的总效应将变为0，即绕压力中心点的力矩为0。 于是有了压力中心的另一种定义，物体上使得空气动力学力矩为零的参考点。
+
+在物体的迎角较小的情况下，$\alpha \approx 0$、$\sin{\alpha}\approx 0$和$\cos{\alpha}\approx 1$。又根据等式\eqref{L由N与A表达}得$L^{\prime}\approx N^{\prime}$，因此，等式\eqref{含N压力中心表达式}变为
+\begin{align}
+	x_{cp}=-\frac{M^{\prime}_{LE}}{L^{\prime}}\label{含L压力中心表达式}
+\end{align}
+考察方程式\eqref{含N压力中心表达式}和\eqref{含L压力中心表达式}，随着$N^{\prime}$和$L^{\prime}$减小，$x_{cp}$增大。当力接近零时，压力中心的数值就得增至无穷大。 由此可见，在空气动力学中，压力中心并不总是一个方便的概念。然而，这不是什么大问题。 在确定由作用在物体上的分布载荷产生的力和力矩系统时，合力作用点可以是物体上的任意点，只要还给出了绕该点的力矩值即可。Figure1.26就展示出了确定翼型上的力和力矩系统的三种等效方式。左边的图将合力作用点放在前缘点，使得$M^{\prime}_{LE}$取有限值。中间的图将合力作用点放在了离前缘点四分之一处的弦线上，$M^{\prime}_{c/4}$也取有限值。右图将合力作用点放在了压力中心，绕该点的力矩为零。通过考察Figure1.26，这三种情况之间的定量关系为
+\begin{align}
+	M^{\prime}_{LE}=-\frac{c}{4}L^{\prime}+M^{\prime}_{c/4}=-x_{cp}L^{\prime}\label{三种力矩选取的关系式}
+\end{align}
+
+	\subsection{量纲分析：白金汉$\Pi$定理}
+	$\ref{推导二维翼型气动力与力矩及系数}$小节对于物体上的气动力和力矩以及相应的力和力矩系数已经进行了定义和充分的讨论。现在的问题是：哪些物理量决定了这些力和力矩的变化？本节中介绍的快速且高效的量纲分折方法将给出答案。量纲分析在本讲义下一章加以论述，此处作为一个例子让大家见识一下量纲分析法的威力。
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.5\textwidth]{竹蜻蜓空气动力学032} 
+		\label{Figure032} 
+	\end{figure}
+	
+	考虑在给定的迎角下具有给定形状的物体（例如Figure1.17所画的情形），记此情形中翼型的气动力为$R$。基于前面几节的讨论和一定的物理直觉，我们猜测$R$取决于以下参量（变量）：
+	\begin{itemize}
+		\item [1.]
+		自由来流的流速$V_{\infty}$
+		\item [2.]
+		自由来流的密度$\rho_{\infty}$
+		\item [3.]
+		流体的黏滞性。我们已经看到剪应力$\tau$对气动力和力矩有贡献，并且剪应力$\tau$与气流中的速度梯度成比例。如果给定速度梯度$\partial u /\partial y$，则$\tau=\mu \partial u /\partial y$，比例常数是黏滞系数$\mu$。 因此，我们用自由流的黏滞系数$\mu_{\infty}$来表达流体的黏滞性对气动力和力矩的影响。
+		\item [4.]
+		物体的尺寸可以由一些选定的特征长度(reference length)表示。在Figure1.17中比较方便的是取特征长度为弦长$c$（译者注：reference length，可以直译为参考长度，中文流体力学教材称之为“特征长度”，这是流体力学中非常重要的概念，比如圆柱绕流的情况下，特征长度可取为圆柱的直径）。
+		\item [5.]
+		流体的可压缩性。 可压缩性的专业定义在原书第7章中给出，简单来说可压缩性与整个流场中密度的变化有关，同时气动力和力矩对这样的变化非常敏感。但压缩性与流体中的声速$a$ 相关联，这一点在Anderson原书第八章有讲。因此，可以用自由来流的声速$a_{\infty}$ 代表可压缩性对气动力和力矩的影响。
+	\end{itemize}
+	上面的讨论很轻松，甚至不需要关于气动力$R$ 这一参量的任何先修知识，我们就能用物理直觉写出：
+	\begin{equation}\label{general function of R}
+		R=f(\rho_{\infty},\,V_{\infty},\,c,\,\mu_{\infty},\,a_{\infty})
+	\end{equation}
+	这一式子是一个普遍的函数关系，并不实用，依然无法计算出气动力$R$。但原则上我们可以用风洞实验进一步明确这个函数关系，把给定的翼型模型安装到风洞里，稍微倾斜让它有一定的迎角（angle of attack，迎角也称为攻角，是翼型的弦线与来流的夹角）。用控制变量法，每次只改变$V_{\infty},\,\rho_{\infty},\,\mu,\,c,\,a_{\infty}$中的某一个变量，去测量$R$ 相应的改变，五个变量都这么做，最后测得大量数据，画出五张散点图，我们就有可能拟合出明确\cref{general function of R}的函数关系。然而，这样的实验太难做了，而且风洞实验很昂贵的，实验时间越长，花销越大。幸运的是，我们可以运用量纲分析法简化问题，从而节省大量时间和精力。运用量纲分析法会导出（或者说定义出）一组无量纲的参量（量纲为1），它们主导了气动力和力矩。它们还很大程度上减少了\cref{general function of R}中独立变量的个数。
+	
+	量纲分析法基于这样一个显而易见的事实，观察任意一个描述世界运行规律的物理方程，方程里的每一项的量纲必然是一致的。举例来说，如果下式
+	\begin{equation}
+		\psi +\eta +\zeta=\phi
+	\end{equation}
+	是一个物理方程，那么$\psi,\,\eta ,\,\zeta$和$\phi$就必须有一致的量纲。否则的话，我就可以在方程里加苹果和橘子咯。上式可以通过让方程两边同时除以任一项，比如$\phi$ ，将方程无量纲化，得到：
+	\begin{equation}
+		\frac{\psi}{\phi} +\frac{\eta}{\phi} +\frac{\zeta}{\phi}=1
+	\end{equation}
+	以上想法都体现在了白金汉$\Pi$定理中，下面给出定理的内容（译者注：推导可以参考赵凯华先生的《定性与半定量物理学》58-59页（第2版），需要一定的线性代数知识，大概用到普通线性代数教材的前三章知识）。
+	\begin{theorem}[Buckingham pi Theorem] \label{thm:Buckingham pi Theorem}
+		设某物理问题内涉及$N$个物理量（包括物理常量）$P_{1},P_{2},\cdots,P_{N}$，而我们所选的单位制中有$K$个基本量（$N>K$），比如在经典力学里，几乎所有物理量$A$的量纲都能表达为长度$L$、质量$M$、时间$T$这三个基本量纲的幂次乘积，即$L^{\alpha}M^{\beta}T^{\gamma}$的形式，其中$L,M,T$ 为基本量，则这些物理量可以且只可以组合成$N-K$个无量纲的量$\Pi_{1},\Pi_{2},\cdots,\Pi_{N-K}$。在物理量$P_{1},P_{2},\cdots,P_{N}$之间存在的函数关系式
+		\begin{equation}
+			f(P_{1},P_{2},\cdots,P_{N})=0
+		\end{equation}
+		可表达成相应的无量纲形式
+		\begin{equation}
+			F(\Pi_{1},\Pi_{2},\cdots,\Pi_{N-K})=0
+		\end{equation}
+		每一个无量纲量$\Pi$都是一组$K$个物理量以及额外一个物理量的幂次乘积，选取这$K$个物理量的要求是，使得所有（$K$个）基本量纲都有所体现，换句话说，如果选取的$K$个物理量没有一个的量纲里含有时间$T$，那不行。于是无量纲量可以表达成：
+		\begin{equation}\label{Pi定理之构造无量纲量}
+			\begin{aligned}
+				&\Pi_{1}=f_{1}(P_{1},P_{2},\cdots,P_{K},P_{K+1})\\
+				&\Pi_{2}=f_{2}(P_{1},P_{2},\cdots,P_{K},P_{K+2})\\
+				&\cdots\cdots\\
+				&\Pi_{N-K}=f_{N-K}(P_{1},P_{2},\cdots,P_{K},P_{N})
+			\end{aligned}
+		\end{equation}
+		意思就是，如果另外的$N-K$个物理量中的一个是$A$，那么$A=P_{1}^{\alpha}P_{2}^{\beta}\cdots P_{K}^{\gamma}\to \Pi_{a}= P_{1}^{\alpha}P_{2}^{\beta}\cdots P_{K}^{\gamma}/A$。这个不难理解，反过来，再举个经典力学里的例子，如果你选取的$K$个物理量只涉及$M$和$L$不涉及$T$，恰好另外的$N-K$个物理量中的$A$的量纲是$L$、$M$、$T$这三个基本量纲的幂次乘积，那么$A\ne P_{1}^{\alpha}P_{2}^{\beta}\cdots P_{K}^{\gamma}\to \Pi_{a}\ne P_{1}^{\alpha}P_{2}^{\beta}\cdots P_{K}^{\gamma}/A$，无量纲量就没法构造出来。需要注意的是，问题里的因变量（比如$R$）最好只出现在一个无量纲量里，因为这样做能方便你借助无量纲量之间的函数关系找出因变量与其他物理量的关系。（在$N=K$的情况下有两种可能：若$P_{1},P_{2},\cdots,P_{K}$的量纲彼此独立，则不能由它们组成无量纲的量；若不独立，则还可能组成无量纲的量）
+	\end{theorem}
+	
+	现在回去考虑给定形状和迎角的物体受到的气动力，\cref{general function of R}可以写成下面的形式：
+	\begin{equation}
+		g(R,\rho_{\infty},\,V_{\infty},\,c,\,\mu_{\infty},\,a_{\infty})=0
+	\end{equation}
+	遵照$\Pi$定理，先列出问题所涉及的所有基本量纲：
+	\begin{align*}	
+		M=\text{质量的量纲}\\
+		L=\text{长度的量纲}\\
+		T=\text{时间的量纲}
+	\end{align*}	
+	因此$K=3$。再列出问题所涉及的六个（$N=6$）物理量的量纲：
+	\begin{equation}\label{六个物理量的量纲普通写法}
+		\begin{cases}
+			[R]=M^{1} L^{1} T^{-2},\quad [c]=M^{0} L^{1} T^{0}\\
+			[\rho_{\infty}]=M^{1} L^{-3} T^{0},\quad [\mu_{\infty}]=M^{1} L^{-1} T^{-1}\\
+			[V_{\infty}]=M^{0} L^{1} T^{-1},\quad [a_{\infty}]=M^{0} L^{1} T^{-1}
+		\end{cases}
+	\end{equation}
+	根据$\Pi$定理，这六个物理量可以且只可以组合成$N-K=6-3=3$个无量纲的量$\Pi_{1},\Pi_{2},\Pi_{3}$，且满足无量纲形式的函数关系：
+	\begin{equation}\label{无量纲形式的函数关系}
+		F(\Pi_{1},\Pi_{2},\Pi_{3})=0
+	\end{equation}
+	\begin{equation}
+	\begin{cases}
+		\Pi_{1}=f_{1}(\rho_{\infty},\,V_{\infty},\,c,\,R)\\
+		\Pi_{2}=f_{2}(\rho_{\infty},\,V_{\infty},\,c,\,\mu_{\infty})\\
+		\Pi_{3}=f_{3}(\rho_{\infty},\,V_{\infty},\,c,\,a_{\infty})
+	\end{cases}
+	\end{equation}
+	接下来的任务就是求出这三个无量纲的量的具体表达式，考虑到读者可能还没学习过线性代数，笔者先用通俗易懂的讲法走一遍，最后再用线性代数快速地重新算一遍，因此学过线性代数的读者可以直接跳到后面去读。
+	
+	先用简单的解方程的方法带读者推导一遍（线性代数在上世纪被称为“方程理论”，当然后来人们认识到线性代数更有趣的地方在于线性算子、线性空间之类的思想），\cref{六个物理量的量纲普通写法}可以等价地写成列表的形式（刨去边上的字母，剩下的东西整个就叫矩阵，因为其元素是数字）：
+\begin{equation}
+	\begin{bNiceMatrix}[first-row,first-col]
+		&R&\rho_{\infty}&V_{\infty}&c&\mu_{\infty}&a_{\infty}\\
+		M&1&1&0&0&1&0\\
+		L&1&-3&1&1&-1&1\\
+		T&-2&0&-1&0&-1&-1
+	\end{bNiceMatrix}
+\end{equation}
+	为了得到一些物理意义更显著的无量纲的量，我们稍微调整一下这个列表（矩阵），等价地写成：
+	\begin{equation}
+	\begin{bNiceMatrix}[first-row,first-col]
+		&\rho_{\infty}&V_{\infty}&c&R&\mu_{\infty}&a_{\infty}\\
+		M&1&0&0&1&1&0\\
+		L&-3&1&1&1&-1&1\\
+		T&0&-1&0&-2&-1&-1
+	\end{bNiceMatrix}
+	\end{equation}
+根据$\Pi$定理中\cref{Pi定理之构造无量纲量}所表达的思想，选取$\rho_{\infty}$、$V_{\infty}$、$c$作为一组$K$个的物理量，因为它们包含了$K$个基本量纲，满足选取要求。额外还有三个物理量$R$、$\mu_{\infty}$、$a_{\infty}$，接下来我们逐一讨论。
+
+先看$\Pi_{1}=f_{1}(\rho_{\infty},\,V_{\infty},\,c,\,R)$，不妨假设$\Pi_{1}=\rho_{\infty}^{\alpha}V_{\infty}^{\beta}c^{\gamma}R$，这时候分析等式两边的量纲，你就会明白这不过是解方程的问题，
+\begin{equation}
+	[\Pi_{1}]=(ML^{-3})^{\alpha}(LT^{-1})^{\beta}(L)^{\gamma}(MLT^{-2})
+\end{equation}
+接下来就确定$\alpha,\beta,\gamma$的值使得$M,L,T$相互抵消构成无量纲量，翻译过来就是这样一个方程组：
+	\begin{equation}
+	\begin{cases}
+		For\ M:\ \alpha+1=0\\
+		For\ L:\ -3\alpha+\beta+\gamma+1=0\\
+		For\ T:\ -\beta-2=0
+	\end{cases}
+	\end{equation}
+解得，$\alpha=-1,\beta=-2,\gamma=-2$，于是得到
+\begin{align}
+	\Pi_{1}&=\rho_{\infty}^{-1}V_{\infty}^{-2}c^{-2}R\\
+	&=\displaystyle\frac{R}{\rho_{\infty}V_{\infty}^{2}c^{2}}
+\end{align}
+
+先看$\Pi_{1}=f_{1}(\rho_{\infty},\,V_{\infty},\,c,\,R)$，不妨假设$\Pi_{1}=\rho_{\infty}^{\alpha}V_{\infty}^{\beta}c^{\gamma}R$，这时候分析等式两边的量纲，你就会明白这不过是解方程的问题，
+\begin{equation}
+	[\Pi_{1}]=(ML^{-3})^{\alpha}(LT^{-1})^{\beta}(L)^{\gamma}(MLT^{-2})
+\end{equation}
+接下来就确定$\alpha,\beta,\gamma$的值使得$M,L,T$相互抵消构成无量纲量，翻译过来就是这样一个方程组：
+	\begin{equation}
+	\begin{cases}
+		For\ M:\ \alpha+1=0\\
+		For\ L:\ -3\alpha+\beta+\gamma+1=0\\
+		For\ T:\ -\beta-2=0
+	\end{cases}
+	\end{equation}
+解得，$\alpha=-1,\beta=-2,\gamma=-2$，于是得到
+\begin{equation}\label{无量纲参数——气动力系数}
+	\begin{aligned}
+		\Pi_{1}&=\rho_{\infty}^{-1}V_{\infty}^{-2}c^{-2}R\\
+		&=\displaystyle\frac{R}{\rho_{\infty}V_{\infty}^{2}c^{2}}
+	\end{aligned}
+\end{equation}
+$R/\rho_{\infty}V_{\infty}^{2}c^{2}$是空气动力学里常用的无量纲参数，其中$c^{2}$有面积的量纲，因此完全可以用研究对象的特征面积（比如机翼的俯视面积$S$）替换，$\Pi_{1}$仍是无量纲的。更进一步，我们可以给它乘以一个常数，\cref{无量纲参数——气动力系数}变为
+\begin{equation}
+		\Pi_{1}=\displaystyle\frac{R}{\frac{1}{2}\rho_{\infty}V_{\infty}^{2}c^{2}}=\displaystyle\frac{R}{q_{\infty}S}
+\end{equation}
+因此，$\Pi_{1}$便是气动力系数$C_{R}$，跟第\ref{推导二维翼型气动力与力矩及系数}小节中的定义式一模一样，再次强调$S$是与给定研究对象的形状密切相关的特征面积。
+
+再看$\Pi_{2}=f_{2}(\rho_{\infty},\,V_{\infty},\,c,\,\mu_{\infty})$，不妨假设$\Pi_{2}=\rho_{\infty}V_{\infty}^{\alpha}c^{\beta}\mu_{\infty}^{\gamma}$，同样地分析等式两边的量纲，转化成方程组求解，
+\begin{equation}
+	[\Pi_{2}]=(ML^{-3})(LT^{-1})^{\alpha}(L)^{\beta}(ML^{-1}T^{-1})^{\gamma}
+\end{equation}
+接下来就确定$\alpha,\beta,\gamma$的值使得$M,L,T$相互抵消构成无量纲量，翻译过来就是这样一个方程组：
+\begin{equation}
+	\begin{cases}
+		For\ M:\ 1+\gamma=0\\
+		For\ L:\ -3+\alpha+\beta-\gamma=0\\
+		For\ T:\ -\alpha-\gamma=0
+	\end{cases}
+\end{equation}
+解得，$\alpha=1,\beta=1,\gamma=-1$，于是得到
+\begin{equation}
+	\begin{aligned}
+		\Pi_{2}&=\rho_{\infty}V_{\infty}c\mu_{\infty}^{-1}\\
+		&=\displaystyle\frac{\rho_{\infty}V_{\infty}c}{\mu_{\infty}}
+	\end{aligned}
+\end{equation}
+这个无量纲组合其实早就被定义为自由来流\footnote{在机翼前方远处的气流称为自由来流}的雷诺数${\rm Re}=\rho_{\infty}V_{\infty}c/\mu_{\infty}$，其物理意义是惯性力与黏性力之比，是流体动力学中非常有用的参数，它的重要性会在Anderson书上第15-20章得到强调\footnote{流体力学关键的无量纲量（or相似参数）\href{https://www.zhihu.com/answer/1019810461}{https://www.zhihu.com/answer/1019810461}}。
+
+最后看$\Pi_{3}=f_{3}(\rho_{\infty},\,V_{\infty},\,c,\,a_{\infty})$，不妨假设$\Pi_{3}=\rho_{\infty}^{\alpha}V_{\infty}c^{\beta}a_{\infty}^{\gamma}$，同样地分析等式两边的量纲，转化成方程组求解，
+\begin{equation}
+	[\Pi_{3}]=(ML^{-3})^{\alpha}(LT^{-1})(L)^{\beta}(LT^{-1})^{\gamma}
+\end{equation}
+接下来就确定$\alpha,\beta,\gamma$的值使得$M,L,T$相互抵消构成无量纲量，翻译过来就是这样一个方程组：
+\begin{equation}
+	\begin{cases}
+		For\ M:\ \alpha=0\\
+		For\ L:\ -3\alpha+1+\beta+\gamma=0\\
+		For\ T:\ -1-\gamma=0
+	\end{cases}
+\end{equation}
+解得，$\alpha=0,\beta=0,\gamma=-1$，于是得到
+\begin{equation}
+	\begin{aligned}
+		\Pi_{3}&=\rho_{\infty}^{0}V_{\infty}c^{0}a_{\infty}^{-1}\\
+		&=\displaystyle\frac{V_{\infty}}{a_{\infty}}
+	\end{aligned}
+\end{equation}
+这个无量纲量也早被定义为自由来流的马赫数$M=V_{\infty}/a_{\infty}$，显然它是流速与声速之比，它在气体动力学研究中非常有用。关于马赫数的讨论在Anderson后续章节会有。\footnote{这三个无量纲量的物理意义很丰富，如读者感兴趣，可以自行阅读Anderson《空气动力学基础》对应的章节，或者上网查阅资料。}
+
+现在整理一下前面的结果，将前面求得的三个无量纲量代入\cref{无量纲形式的函数关系}得到
+\begin{equation}
+F\left(\displaystyle\frac{R}{\frac{1}{2}\rho_{\infty}V_{\infty}^{2}c^{2}},\displaystyle\frac{\rho_{\infty}V_{\infty}c}{\mu_{\infty}},\displaystyle\frac{V_{\infty}}{a_{\infty}}\right)=0
+\end{equation}
+或者
+\begin{equation}
+	F(C_{R},{\rm Re},M_{\infty})=0
+\end{equation}
+或者
+\begin{equation}\label{力系数与雷诺数和马赫数有关}
+	C_{R}=F_{1}({\rm Re},M_{\infty})
+\end{equation}
+这是一个非常重要的结果！对比\cref{general function of R}和\cref{力系数与雷诺数和马赫数有关}，在原先的\cref{general function of R}中，气动力$R$表达为五个独立变量的一般函数式。不过，我们进行了系统的量纲分析后发现：
+\begin{itemize}
+    \item[1.]$R$可以表达为无量纲的力系数形式，$C_{R}=R/\frac{1}{2}\rho_{\infty}V_{\infty}^{2}S$。
+    \item[2.]$C_{R}$只是${\rm Re}$和$M_{\infty}$的函数，见\cref{力系数与雷诺数和马赫数有关}。
+\end{itemize}
+因此，利用$\Pi$定理，从\cref{general function of R}到\cref{力系数与雷诺数和马赫数有关}大大减少了独立变量数目。到这里，如果我们想用翼型做一系列的风洞实验\footnote{把给定的翼型安装到风洞里，稍微倾斜让它有一定的迎角，实际上风洞实验进行翼型测试用的是大展长的翼型，两边延伸到风洞两边的侧壁上，以减少翼尖涡带来的气流干扰。}，那么我们只需要依次改变雷诺数和马赫数，测升力，进而将\cref{力系数与雷诺数和马赫数有关}的显式表达式完全定下来。通过简单的量纲分析，我们就能节省巨大的精力和风洞实验时间。更重要的是，我们揪出了两个无量纲参数，雷诺数和马赫数，正是它俩主导了流动。它们被叫做\textbf{相似参数}，下面将给出具体缘由。还有其他的相似参数在Anderson后续章节中会逐渐引出。
+
+由于升力和阻力是气动力$R$的分量\footnote{升力和阻力的合力就是气动力}，\cref{力系数与雷诺数和马赫数有关}的自然推论便是
+\begin{equation}
+	C_{L}=F_{2}({\rm Re},M_{\infty})
+\end{equation}
+\begin{equation}
+	C_{D}=F_{3}({\rm Re},M_{\infty})
+\end{equation}
+此外，气动力矩也有类似于\cref{general function of R}的表达式，进行类似的量纲分析也能得到
+\begin{equation}\label{力矩系数与雷诺数和马赫数有关}
+	C_{M}=F_{4}({\rm Re},M_{\infty})
+\end{equation}
+记住以上分析是针对给定形状和迎角$\alpha$的翼型的，如果迎角$\alpha$也是变量，那么$C_{L},C_{D},C_{M}$都是$\alpha$的函数，因此\cref{力系数与雷诺数和马赫数有关}到\cref{力系数与雷诺数和马赫数有关}可以推广为
+\begin{align}
+	C_{L}&=F_{5}({\rm Re},M_{\infty},\alpha)\\
+	C_{D}&=F_{6}({\rm Re},M_{\infty},\alpha)\\
+	C_{M}&=F_{7}({\rm Re},M_{\infty},\alpha)
+\end{align}
+推广之后的式子有一个前提，就是给定了翼型的形状。大量的计算流体力学理论和空气动力学实验都在致力于求出某一特定形状的翼型的精确表达式。
+
+下面用线性代数快速地重新算一遍，没学过线代的读者可以跳过这部分。\cref{六个物理量的量纲普通写法}可以等价地写成矩阵的形式：
+\begin{equation}
+	\begin{bNiceMatrix}[first-row,first-col]
+		&R&\rho_{\infty}&V_{\infty}&c&\mu_{\infty}&a_{\infty}\\
+		M&1&1&0&0&1&0\\
+		L&1&-3&1&1&-1&1\\
+		T&-2&0&-1&0&-1&-1
+	\end{bNiceMatrix}
+\end{equation}
+或者等价地写成这个形式，我们希望以$\rho_{\infty}$、$V_{\infty}$、$c$作为基底（想要得到某种形式的、物理意义更显著的无量纲的量，就得选择特定的$K$个物理量组合，本节结束之后再回来考虑可能就会明白这一点，不着急）：
+\begin{equation}
+	\begin{bNiceMatrix}[first-row,first-col]
+		&\rho_{\infty}&V_{\infty}&c&R&\mu_{\infty}&a_{\infty}\\
+		M&1&0&0&1&1&0\\
+		L&-3&1&1&1&-1&1\\
+		T&0&-1&0&-2&-1&-1
+	\end{bNiceMatrix}
+\end{equation}
+继续对该矩阵做行变换化成最简形：
+\begin{equation}
+	\begin{bNiceMatrix}[first-row,first-col]
+		&\rho_{\infty}&V_{\infty}&c&R&\mu_{\infty}&a_{\infty}\\
+		M&1&0&0&1&1&0\\
+		L&0&1&0&2&1&1\\
+		T&0&0&1&2&1&0
+	\end{bNiceMatrix}
+\end{equation}
+可见，在三个基本量纲$M$、$L$、$T$张成的线性空间中，$\rho_{\infty}$、$V_{\infty}$、$c$可作为空间中的一组线性无关的基底，$R$、$\mu_{\infty}$、$a_{\infty}$可以在空间中展开，换句话说，都可以用三个基底$\rho_{\infty}$、$V_{\infty}$、$c$的线性组合加以表示。
+\begin{equation}
+	\begin{cases}
+		R=\rho_{\infty}V_{\infty}^{2}c^{2}\\
+		\mu_{\infty}=\rho_{\infty}V_{\infty}c\\
+		a_{\infty}=V_{\infty}
+	\end{cases}\text{或者写成无量纲量的等式，}
+	\begin{cases}
+		\Pi_{1}=\displaystyle\frac{R}{\rho_{\infty}V_{\infty}^{2}c^{2}}\rightarrow\displaystyle\frac{R}{\displaystyle\frac{1}{2}\rho_{\infty}V_{\infty}^{2}c^{2}}\\
+		\Pi_{2}=\displaystyle\frac{\rho_{\infty}V_{\infty}c}{\mu_{\infty}}\\
+		\Pi_{3}=\displaystyle\frac{V_{\infty}}{a_{\infty}}
+	\end{cases}	
+\end{equation}
+上面的无量纲量$\Pi_{1},\Pi_{2},\Pi_{3}$乘以任意的常数因子都是可以的，不会改变它是无量纲数的事实。$\Pi_{1}$右边箭头指向的式子是更常见到的形式，其物理含义是动压（$\displaystyle\frac{1}{2}\rho_{\infty}V_{\infty}^{2}$）乘以特征面积（$c^{2}$）。动压在前面讲过，见\cref{动压的定义}。
+
+\subsection{流动相似性}
+考虑两个不同物体上的两个不同流场。 根据定义，不同的流动具有流动相似性的条件是：
+\begin{itemize}
+	\item [1.]
+    流线类型具有几何相似性。
+	\item [2.]
+	在常见的无量纲坐标系（\cref{无量纲体轴坐标系}）中进行绘制时，$V/V_{\infty}$，$p/p_{\infty}$，$T / T_{\infty}$等等在整个流场中的分布是相同的。
+	\item [3.]
+	各种气动力系数相同。
+\end{itemize}
+
+实际上，第3项是第2项的结果； 如果在不同物体上的无量纲压力和切应力分布相同，则多维力系数将相同。风洞实验的依据就是这个，用缩小的模型进行实验，采集压力和切应力大小，算出力系数，那么飞机原型的力系数也就得到了。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{竹蜻蜓空气动力学033} 
+	\label{无量纲体轴坐标系} 
+	\caption{无量纲体轴坐标系}
+\end{figure}
+除了体轴坐标系，还有风轴坐标系，即$x$轴取与自由来流相同的方向。
+\section{竹蜻蜓（Hand Helicopter）——翼型绕流-2021年CUPT题目}
+2021年第17题Hand Helicopter\ 手提直升机/竹蜻蜓
+
+英文题目：A simple hand helicopter can be made by attaching rotor blades to one end of a vertical stick. The helicopter moves upwards when the stick is twisted at a high enough speed and then let go. Investigate how the relevant parameters affect the lift-off and the maximum height.
+
+官方翻译：一架简单的手提直升机可以通过将旋翼叶片固定在垂直杆的一端制作而成。当垂直杆以足够高的速度旋转时，松开手，手提直升机就会起飞。探究相关参数对起飞和飞行最大高度的影响。
+
+\subsection{竹蜻蜓二维气动特性}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学038} 
+	\label{Figure038} 
+	\caption{迎角为-4.0度}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学037} 
+	\label{Figure037} 
+	\caption{迎角为0.0度}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学035} 
+	\label{Figure035} 
+	\caption{迎角为4.0度}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学034} 
+	\label{Figure034} 
+	\caption{迎角为8.0度}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学036} 
+	\label{Figure036} 
+	\caption{迎角为12.0度}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学040} 
+	\label{Figure040} 
+	\caption{迎角为16.0度}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学041} 
+	\label{Figure041} 
+	\caption{迎角为17.0度}
+\end{figure}
+驻点（Stagnation point）指流场中速度为零的点。该点静压最大。
+
+随迎角增加，驻点由上表面经前缘向下表面，向后发展。翼型上表面吸力峰后的逆压梯度随迎角增加而显著增强。该逆压梯度是造成失速的主要原因，失速发生后上表面吸力迅速消失，只有下表面保留正压力存在。逆压梯度同时也会引起层流附面层转化为紊流附面层。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学043} 
+	\label{Figure043} 
+	\caption{升力系数随迎角变化图分析}
+\end{figure}
+失速迎角在工程上甚至可以是($16^{\circ}\pm 4^{\circ}$)
+\subsection{科学看待分子碰撞理论：现代应用}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{竹蜻蜓空气动力学039} 
+	\label{Figure039} 
+	\caption{"Skipping Stone" Theory}
+\end{figure}
+NASA官网上讲到了我们之前研究过一段时间又放弃的理论，我想叫它“分子碰撞理论”，不过NASA叫它“打水漂理论”。根据前面几张压力分布图，就知道这个理论为什么错误，因为贡献升力的主要是翼型的上表面，而不是下表面。
+
+但在有些特殊情况，这种“打水漂理论”又可以很准确。飞行器再入大气层时，大气很稀薄，空气分子很少，这时用“打水漂理论”反而更准确一些。（这是NASA网站上写的，至于事实如何我也不甚清楚。）
+
+现如今也没有人敢轻易解释升力产生的机理，连NASA官网也说这个原理很复杂。
+
+以下是几点尝试：
+\begin{itemize}
+	\item[1.]作用力与反作用力
+	\item[2.]驻点处的阻滞使该区域的流管变窄，从而产生上表面吸力峰和下表面正压力区。驻点就是翼型前缘点下方的一点，该点阻滞强的地方流速大。根据这个理论可以近似得到和实验相符的压力分布图。
+\end{itemize}
+
+
+\section{不起眼的瓶子——圆柱绕流-2020年CUPT题目\textcolor{red}{建议刘秀来编辑这一部分}}
+
+
+
+\chapter{流体力学是量纲分析的“演武场”和“丰收地”}
+\section{量纲分析的导引}
+当一位成熟的物理学家进行探索性的科学研究时，常常从定性的或半定量的方法入手。这包括对称性的考虑和守恒量的利用、量纲分析、数量级估计、简化模型的选取、极限情形和特例的讨论，以至概念和方法的类比，等等。
+
+量纲分析是流体力学书中最平平无奇的一章嘛？随意翻开一本流体力学教科书，我们一定会发现有专门的一章叫“相似原理与量纲分析”，内容不多，却自成体系，而且和其他的章节好像也没有明显的关联。和雷诺实验、伯努利方程、N-S方程这些大名鼎鼎的招数比起来，量纲分析法显得平平无奇又格格不入。真的如此嘛？读完本章，相信读者心中自由答案。
+\subsection{流动相似的概念与准则}
+“相似”的概念，最早产生于几何学中，比如我们熟悉的相似三角形：各对应边长成比例，各对应角彼此相等。当然，“相似”的例子在生活中也不胜枚举，最有趣的大概就是有名的“俄罗斯套娃”了。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{俄罗斯套娃（几何相似）.png} 
+	\caption{俄罗斯套娃（几何相似）}
+	\label{俄罗斯套娃（几何相似）} 
+\end{figure}
+
+几何的“相似”很容易理解，那么如何把“相似”的观点推广到流体上呢？流动的维度显然要比单纯的几何体复杂的多，而相似也需要更加全面的描述：
+
+1. 几何相似，即所有对应的尺寸成比例，对应线段的角度和方位相同；
+
+2. 时间相似，即所有物理过程对应的时间间隔成比例；
+
+3. 运动相似，即所有对应点上的速度和加速度方向一致，大小成比例；
+
+4. 动力相似，即所有对应点上的应力方向一致，大小成比例。
+
+通常情况下，几何相似、运动相似和动力相似是一般的流动相似所必须满足的相似条件，而这三种相似是有联系的：几何相似是前提，动力相似是决定运动相似的主导因素，而运动相似则是几何相似和动力相似的表现。
+\subsection{流动相似的妙用}
+有了流动相似的概念，再联系实际便不难发现“流动相似”在我们的日常生活中就有例证，比如海洋表面形成的卡门涡街和实验中发现的卡门涡街的流动形态几乎如出一辙。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{卡门涡街现象（流动相似）.png} 
+	\caption{卡门涡街现象（流动相似）}
+	\label{卡门涡街现象（流动相似）} 
+\end{figure}
+
+而在流体实验中，相似原理则有更多的应用，比如在车辆开发的早期，为了节省物料成本和实验开销，工程师们经常把小一号的模型放入风洞中进行测试。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{赛车风洞试验（流动相似）.png} 
+	\caption{赛车风洞试验}
+	\label{赛车风洞试验（流动相似）} 
+\end{figure}
+
+而航空器测试的缩比实验更是比比皆是。即便是对于世界上最大的风洞来说，大部分飞机的尺寸还是太大了。只能把实验件缩小，然后调节实验工况，达到和原型相似的流动条件进行测试。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{飞机风洞试验（流动相似）.png} 
+	\caption{飞机风洞试验}
+	\label{飞机风洞试验（流动相似）} 
+\end{figure}
+
+通常情况下，上述比例模型实验的相似条件，都会归纳成一系列的相似准则数，比如流动问题中的雷诺数和马赫数，对流换热问题中的努塞尔数和瑞利数等。对于某一类型的流动，只要其相似准则数相等，则可认为其物理过程是相似的。这些数字没有量纲，因此被称为无量纲数。
+
+\section{量纲分析的基本概念和$\upPi$定理}
+量纲分析有它的核心概念和定理，理解它们对于灵活使用量纲分析来解决问题非常重要。量纲分析核心知识点包括量纲概念、7个基本量纲单位、量纲一致性定律、量纲齐次性定理、白金汉$\upPi$定理、量纲分析6步法、模型实验与原问题的相似模数都必须一样等概念。
+\subsection{量纲和基本量纲单位}
+任何物理量都有量纲或单位，该物理量的大小就是这个单位的多少倍，即一个标量乘这个单位。如长度10米， 其中米是度量这个长度的单位，而10是这个长度和米所表示的单位长度的比例。很明显，用来度量这个物理量的单位和这个物理量本身一定是同一类型的量，或者说，这些量的量纲是相同的。长度的量纲我们用L来表示，而不特别说明具体是用长度的米、厘米还是毫米，只要是长度量纲就行。 
+
+当然也有一些量是没有量纲，我们就称其为“无量纲”量，如角度和一些导出的量。
+
+物理世界千变万化，看起来非常复杂，但可以庆幸的是，基本的物理量量纲单位一共只要7个(见表2)，所以我们有结论：基本的物理量量纲单位一共只要7个；所有其他的物理量都是其组合的导出单位。
+
+\begin{table}[h]
+	\caption{基本物理量的量纲、符号和国际单位}
+	\centering
+	\begin{threeparttable}
+	\begin{tabular}{cccc}
+		\toprule[1.5pt]  
+		\makebox[0.2\textwidth][c]{基本物理量名称}	&  \makebox[0.2\textwidth][c]{量纲Dimension} &\makebox[0.2\textwidth][c]{符号Symbol}	&\makebox[0.2\textwidth][c]{SI单位} \\ 
+		\midrule[1pt]
+		质量 & M &\si{\meter} &\si{\kilogram}(kilogram)\\
+		长度 & L &$L$&\si{m}(meter)\\
+		时间&T&$t$&\si{second}(second)\\
+		热力学温度 & $\upTheta$ &$T$&\si{\kelvin}(kelvin)\\
+		电流 &I &$I$&\si{\ampere}(ampere)\\
+		发光强度 & J &$C$&\si{\candela}(candela)\\
+		物质的量 & N &$N$&\si{\mole}(mole) \\
+		\bottomrule[1.5pt]
+	\end{tabular}
+	\begin{tablenotes}
+		\footnotesize
+		\item[*] \href{https://www.nim.ac.cn/520/si.html}{中国计量科学研究院-SI基本单位\ https://www.nim.ac.cn/520/si.html}
+	\end{tablenotes}
+	\end{threeparttable}
+	
+	
+	\label{tab:基本物理量的量纲、符号和国际单位}
+\end{table}
+
+
+至此，平平无奇的“量纲”同学终于出场了，我们先来看看量纲的定义吧——量纲指的是物理量的类别，可用dim表示。比如我们流体力学范畴中最熟悉的三大基本量纲：质量、长度和时间。不过多说一点，很多人可能会无意中混淆了量纲和单位之间的概念。单位是用来描述物理量的，比如分、秒是时间单位；公里、米是长度单位等。在国际单位制中，质量、长度和时间的基本量纲记为：
+\begin{equation*}
+	\mathrm{dim}\ m=M,\  \mathrm{dim}\ l=L, \ \mathrm{dim}\ t=T
+\end{equation*}
+
+在物理学中，看似其貌不扬的“量纲”也有其特别之处：除了基本量纲之外，其他的物理量，比如速度、密度、压强、能量等等，均可以通过基本量纲导出。
+
+在粒子物理里面常用的是自然单位制，$c=\hbar=k=1$。光速$c=1$使得长度和时间的量纲一致，普朗克常数$\hbar=1$使得长度和动量的量纲互为倒数\footnote{由海森堡不确定性关系的位置-动量形式可以得出}、能量和时间的量纲互为倒数\footnote{由海森堡不确定性关系的能量-时间形式可以得出}，玻尔兹曼常数$k=1$使得温度和能量的量纲一致。也就是说在自然单位制下温度、能量、动量和质量的量纲是一致的，以能量（或者质量）为基本量纲，可以利用$E^{p-q-r}$将CGS单位制下物理量的量纲$M^{p}L^{q}T^{r}$快速换算到自然单位制下。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{自然单位制换算.png} 
+	\caption{CGS单位换算到自然单位制}
+	\label{CGS单位换算到自然单位制} 
+\end{figure}
+\subsection{量纲的一致性定律}
+认识了量纲，就可以开始量纲分析了吗？别着急，我们还需要给量纲分析上一把锁：只有同类型的物理量才可以互相比较大小，比如，200秒和175公分是没办法比较的。这句听着像废话一样的话被称为\textbf{量纲一致性原则}。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{量纲一致性原则（量纲分析）.png} 
+	\caption{量纲一致性原则}
+	\label{量纲一致性原则（量纲分析）} 
+\end{figure}
+\textbf{量纲一致性定律: 每个在公式中相加的量其量纲必须一致。}
+
+例如，Einstein质能方程，$E=m c^{2}$， 量纲关系是$ML^{2} T^{-2}=M(L/T)^2$。如果在推导公式时发现某些项的量纲之间不同，那么一定是推导有误，必须修改以保证公式中的每一项的量纲都一致。
+
+与量纲一致性原理相关的一个原理是说描写真实世界的物理定律中的物理量与测量这些物理量的单位无关。比如力学的Newton定律$F =m a$ 中的质量可以使用 \si{\kilogram} ，也可以使用 \si{\gram} ，不管用什么单位，公式都应该成立。这种与物理量单位无关的现象反映了物理定律一个非常重要的不变性原理。
+
+\subsection{量纲的齐次性定律}
+量纲是物理量的种类属性，物理量的量纲反映该物理量随基本量的单位变化而变化的倍数.物理量的量纲如何来表达，它一般是什么形式？在力学系统中，基本量纲有3个，长度$L$，质量$M$和时间$T$，这个系统中的任何的物理量$Y$都可以表示成$Y =L^{a}M^{b}T^{c}$, 其中$a ,\,b ,\,c$ 为实数。
+
+更一般地说，某一物理量Q可以用方程表示为基本物理量的幂次乘积
+\begin{equation}
+	\operatorname{dim} Q=L^{\alpha} M^{\beta} T^{\gamma} I^{\delta} \Theta^{\varepsilon} N^{\xi} J^{\eta}
+\end{equation}
+这一关系式称为物理量Q对基本量的量纲。式中 $\alpha$ 、 $\beta$ 、 $\gamma$ 、 $\delta $、 $\varepsilon$ 、 $\xi$ 、 $\eta$ 称为量纲的指数。
+
+一个无量纲的纯数$A$也可以这样表达，只是其幂次都为零，即$A =L^{0}M^{0}T^{0}$.其实这个结果是一般性的.一个问题的基本量纲一旦确定，其中的任何物理量都可以表达成基本量纲的幂次形式， 
+
+\textbf{物理量纲的幂次定律: 任何物理量的量纲公式都是基本量纲的幂次单项式的形式。}
+
+比如伯努利方程左侧三项的量纲都可换算为$ML^{-1}T^{-2}$（压强），其单位则都可换算为 \si{\kilogram\per\meter\per\square\second} （帕斯卡）：
+\begin{equation}
+	\displaystyle\frac{1}{2}\rho v^{2}+\rho g h+p=Constant
+\end{equation}
+
+\subsection{$\upPi$ 定理——量纲分析法的启蒙和发展}
+早在1765年的时候，无所不能的欧拉就提出了量纲分析的概念，到了1877年，瑞利明确提议将量纲分析作为一种分析方法，而真正奠定量纲分析理论基础的则是1914年Buckingham提出的 $\upPi$ 定理\cite{Buckingham}。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{欧拉、瑞利、白金汉.png} 
+	\caption{欧拉、瑞利、白金汉}
+	\label{欧拉、瑞利、白金汉} 
+\end{figure}
+
+著名的$\upPi$定理描述如下：设某物理问题内涉及$n$个物理量（包括物理常量）$P_{1},P_{2},\cdots,P_{n}$，而我们所选的单位制中有$m$个基本量（$n>m$），则这些物理量可以且只可以组合成$n-m$个无量纲的量$\Pi_{1},\Pi_{2},\cdots,\Pi_{n-m}$。在物理量$P_{1},P_{2},\cdots,P_{n}$之间存在的函数关系式
+\begin{equation}
+	f(P_{1},P_{2},\cdots,P_{n})=0
+\end{equation}
+可表达成相应的无量纲形式
+\begin{equation}
+	F(\Pi_{1},\Pi_{2},\cdots,\Pi_{n-m})=0
+\end{equation}
+（在$n=m$的情况下有两种可能：若$P_{1},P_{2},\cdots,P_{m}$的量纲彼此独立，则不能由它们组成无量纲的量；若不独立，则还可能组成无量纲的量）
+
+定理的证明需要用到线性代数的知识，这里不再赘述，请读者阅读赵凯华先生的《定性与半定量物理学》58-59页。
+
+因此，对于特定问题使用量纲分析法的关键，则是明确所研究问题中涉及到的物理量以及基本量纲，并根据白金汉定理推导对应问题的无量纲数，最后实施量纲齐次性原理推导各物理量的幂指数，以实现量纲的一致性。
+
+\subsection{量纲分析6步法（待编辑）}
+\subsection{模型实验与原问题的相似模数都必须一样（待编辑）}
+
+量纲方法很简便，也很物理，但很考验物理上的直觉和洞察力，有时还需要相当的经验和对现象本质透彻的了解。希望你不断地尝试对手中的题目进行量纲分析，如果实在不会，就过一周、一个月再分析一遍，不断地试！
+
+\section{好书摘录——流体力学是量纲分析的“演武场”和“丰收地”}
+前面第一章介绍了流体力学的一些基本概念，后面又介绍了量纲分析的基本定理和原则。或许会有读者感到困惑，这两章有啥联系？本章将带着读者拿着量纲分析这把利器杀入流体力学世界！
+
+空气动力学那一章我们举了很多应用量纲分析解决物理问题的例子，相信读者已经初步见识了量纲分析的威力，\textbf{但是}其中多数例子不用量纲分析也能解决，因为问题所涉及的运动方程在物理学中早已知晓，而且求解也不存在原则困难。\textbf{然而}，工程技术中经常遇到各种复杂问题，它们或是涉及无法求解的方程，或是（更有甚者）所涉及的本来就是不清楚的未知现象，连有关方程也不得而知。如果不懂量纲分析，就只能盲目地做实验。但是工程问题往往涉及诸多因素，实验时往往要让每个因素（自变数）独立地改变多次，费时费力费钱，甚至根本无法完成。反之，如果掌握量纲分析，就可以首先找出相关物理量的规律性联系，可以用$\upPi$定理压缩独立自变数的个数，并以此为基础设计数量最少的实验，通过实验找到主要涉及量之间的定量关系，最终达到部分甚至全部解决问题的目的。\textbf{量纲分析实在是指导实验设计的无可替代的理论基础}。所以，在做流体相关实验之前一定要用量纲分析找找规律，免得费力不讨好。
+
+量纲分析法从牛顿时代就开始受到关注，当时称为相似性原理[现在简称“相似论”，详细论述可以参考梁灿彬老师的新书《量纲理论与应用》第10章第5节（2020年12月科学出版社出版），梁老这书使用了微分几何，有些许艰涩，读者可以选读一部分]。虽然热传导问题是量纲方法早期发展中的研究课题，但量纲法的更为广泛的应用领域是流体动力学。流体动力学可以算得上是量纲方法用于物理学的非常重要的“演武场”和“丰收地”。本章介绍量纲分析在流体力学的应用（特别强调它对指导实验的意义）。考虑到部分读者对流体力学可能不够熟悉，本章第一节将对流体力学的基础知识做一提要。熟悉流体力学的读者可以跳过此节。\cite{梁灿彬《量纲理论与应用》}
+
+梁灿彬老师新书《量纲理论与应用》之流体力学基础提要，电子版目前找不到，且新书很贵，此处摘录一章以飨读者！梁老的这本书，可能是他的研究背景的原因，他的讲解更偏重物理而不是工程，物理系的同学读起来更亲切一些，故摘录于此。
+
+梁老首先对流体力学基础做了简洁的讲解，如果读者在讲义前面的章节有没读懂的地方，那么这里还有机会整明白。如果有些概念和推导不明白，推荐阅读王洪伟老师的《我所理解的流体力学》（\cref{我所理解的流体力学-第2版}）里的相应部分。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{流体力学基础提要-开头.jpg} 
+	%\caption{流体力学基础提要001}
+	\label{流体力学基础提要001} 
+\end{figure}
+
+\includepdf[pages={1-37}]{梁灿彬新书《量纲理论与应用》之流体力学基础提要.pdf} 
+
+\newpage
+% \chapter{CUPT中的流体力学应用（待编辑）}
+% 往届CUPT也有很多流体力学相关的赛题，让我们观摩一下老队员之前是怎么做这些流体题的。
+% \chapter{COMSOL多物理场仿真软件在流体力学中的应用（待编辑）}
+\chapter{COMSOL三维建模与3D打印（待编辑）}
+	目前3512实验室有两台3D打印机可以免费使用，我（叶凯帆）是机子的主要负责人，需要打印请联系我（QQ：2829259839）。
+	
+	打印之前你得自己建模，当然前提是安装可用于建模的软件。我去年打印的一堆竹蜻蜓发射装置是用COMSOL内置的CAD内核建立三维几何模型的，在我看来就是傻瓜式操作，没人教我，我自己摸索的。后续会有3D建模与打印方面的全过程培训，希望大家都能来哦。（2021年10月23日注：疫情反弹，封校了，活动只好改线上了。）
+	
+	123D是Autodesk开发的，微信公众号“123D自习室”有现成的免费教学视频，每一个十几分钟左右，挺容易学的，推荐给大家。入门步骤如下：
+	\begin{itemize}
+		\item[1.]关注微信公众号“123D自习室”
+		\item[2.]回复“123D”，获取软件下载链接，\href{https://www.cnblogs.com/softxmm/p/13972678.html
+		}{软件小妹帮你多线程高速下载}，不买网盘会员也能极速（5\,MB/s）下载软件包
+		\item[3.]\href{https://mp.weixin.qq.com/s/krJOPZoP1Xr_HbbuSe0zaQ}{123D视频教程}，\href{https://mp.weixin.qq.com/s/gEQndoiTDSCrykHny5RKgA}{内容目录}
+	\end{itemize}
+123D这个我以前没用过，但听说入手很快，而且功能强大，初学就能做出自己名字的印章，这个我用COMSOL估计都做不出来。
+
+下面介绍一下COMSOL的三维建模，很多同学后续研究要用它来仿真，将理论可视化，COMSOL是刚需。所以掌握COMSOL建模是很有必要的，\cref{COMSOL建模之竹蜻蜓发射装置}便是我做的实验装置，利用一系列的基本几何形状（圆柱、四面体），通过合并（并集）、切割（差集）等等操作，可以精准地构建模型，前提是要有足够的空间想象力。
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\textwidth]{COMSOL建模之竹蜻蜓发射装置.png} 
+		\caption{COMSOL建模之竹蜻蜓发射装置}
+		\label{COMSOL建模之竹蜻蜓发射装置} 
+	\end{figure}
+% \section{COMSOL使用技巧（待编辑）}
+% \chapter{老队员的经验呐！（待编辑）}
+\nocite{*} 
+%\printbibliography
+
+	\begin{thebibliography}{9}%宽度9
+	\bibitem{韩占忠：工程流体力学基础}韩占忠, 王国玉. 工程流体力学基础[M]. 2版. 北京:北京理工大学出版社, 2016.
+	\bibitem{哈里德：物理学基础}[美]哈里德(D. Halliday), 等. 物理学基础[M]. 原书第6版. 张三慧, 等译. 北京: 机械工业出版社, 2005.
+	\bibitem{朗道：流体动力学}（俄罗斯）朗道, （俄罗斯）栗弗席兹, 著. 理论物理学教程. 第6卷, 流体动力学[M]. 第5版. 李植, 译. 北京: 高等教育出版社, 2013.
+	\bibitem{王洪伟：我所理解的流体力学}王洪伟. 我所理解的流体力学[M]. 北京: 国防工业出版社, 2014.
+	\bibitem{Buckingham}Buckingham, E. On physically similar systems; illustrations of the use of dimensional equations. Phys. Rev. 4, 345-376 (1914).
+	\bibitem{梁灿彬《量纲理论与应用》}梁灿彬, 曹周键. 量纲理论与应用[M]. 北京: 科学出版社, 2020:271-306.
+	\bibitem{空气动力学基础}John D. Anderson, Jr. 空气动力学基础(第5版)[M]. 北京:航空工业出版社, 2014.2.
+	\bibitem{飞行原理, 北航宋磊课件}宋磊. 飞行原理, 北航课件, 第4讲, 气动力系数和二维翼型绕流特性. [EB / OL]. \href{http://shi.buaa.edu.cn/songlei/zh_CN/jxzy/20673/content/1227.htm}{http://shi.buaa.edu.cn/songlei/zh\_CN/jxzy/20673/content/1227.htm}
+
+	\end{thebibliography}
+%\appendix
+
+%\chapter{基本数学工具}
+%本附录包括了流体力学中用到的一些基本数学。
+
+
+
+\end{document}
